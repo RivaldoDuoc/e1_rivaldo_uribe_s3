@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Logo en la parte superior izquierda -->
+    <ion-buttons slot="start">
+      <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    </ion-buttons>
+    <!-- Menú hamburguesa en la parte superior derecha -->
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Detalle del Libro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Imagen del libro con tamaño ajustado -->
+  <div class="book-image-container">
+    <img [src]="libro.imagen" alt="Imagen del libro" class="book-image" />
+  </div>
+
+  <!-- Información del libro -->
+  <h2>{{ libro.titulo }}</h2>
+  <p><strong>Autor:</strong> {{ libro.autor }}</p>
+  <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
+  <p><strong>Reseña:</strong> {{ libro.resena }}</p>
+
+  <!-- Comentarios -->
+  <h3>Comentarios</h3>
+  <div *ngFor="let comentario of libro.comentarios">
+    <p><strong>{{ comentario.usuario }}:</strong> {{ comentario.texto }}</p>
+  </div>
+
+  <!-- Sección para valorar el libro -->
+  <h3>Valorar</h3>
+  <ion-item>
+    <ion-label>Valoración:</ion-label>
+    <ion-range min="1" max="5" [(ngModel)]="valoracion"></ion-range>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Comentario:</ion-label>
+    <ion-textarea [(ngModel)]="comentarioUsuario"></ion-textarea>
+  </ion-item>
+  <ion-button expand="block" (click)="enviarValoracion()">Enviar valoración</ion-button>
+</ion-content>
+

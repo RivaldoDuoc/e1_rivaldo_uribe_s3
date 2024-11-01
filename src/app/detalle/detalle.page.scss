@@ -1,0 +1,42 @@
+ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Color de fondo del toolbar */
+    height: 56px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 100px;
+    height: auto;
+  }
+  
+  /* Contenedor para ajustar el tamaño de la imagen del libro */
+  .book-image-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .book-image {
+    width: 60%; /* Ajusta el tamaño de la imagen */
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  h2 {
+    color: #007bff;
+  }
+  
+  h3 {
+    color: #007bff;
+    margin-top: 20px;
+  }
+  
+  ion-item {
+    margin-top: 15px;
+  }
+  
+  ion-button {
+    margin-top: 20px;
+  }
+  

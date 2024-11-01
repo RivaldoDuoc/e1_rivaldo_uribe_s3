@@ -1,0 +1,42 @@
+/* Estilo del ion-toolbar en el encabezado */
+ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Color de fondo del toolbar */
+    height: 56px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 100px;
+    height: auto;
+  }
+  
+  .mejores-valorados {
+    text-align: center;
+    color: #17416d;
+    font-size: 1.5em;
+    margin-top: 20px;
+  }
+  
+  .libro-card {
+    background-image: url('/assets/img/background.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  
+  .libro-imagen {
+    width: 100%;
+    max-width: 90%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    border-radius: 10px;
+  }
+  
+  .libro-titulo, .libro-detalle {
+    color: #17416d;
+  }
+  

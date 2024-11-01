@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    </ion-buttons>
+    <ion-title>Registro de Usuario</ion-title>
+    <ion-buttons slot="end">
+      <!-- Botón de retroceso -->
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()">
+
+    <ion-item class="rounded-item">
+      <ion-label position="floating">Nombre</ion-label>
+      <ion-input formControlName="nombre" type="text"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.get('nombre')?.hasError('required') && perfilForm.get('nombre')?.touched">
+      Nombre es requerido
+    </ion-text>
+
+    <ion-item class="rounded-item">
+      <ion-label position="floating">Apellidos</ion-label>
+      <ion-input formControlName="apellidos" type="text"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.get('apellidos')?.hasError('required') && perfilForm.get('apellidos')?.touched">
+      Apellidos son requeridos
+    </ion-text>
+
+    <ion-item class="rounded-item">
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.get('email')?.hasError('email') && perfilForm.get('email')?.touched">
+      E-mail inválido
+    </ion-text>
+
+    <ion-item class="rounded-item">
+      <ion-label position="floating">Contraseña</ion-label>
+      <ion-input formControlName="password" type="password"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.get('password')?.hasError('minlength') && perfilForm.get('password')?.touched">
+      La contraseña debe tener entre 4 y 6 caracteres
+    </ion-text>
+
+    <ion-item class="rounded-item">
+      <ion-label position="floating">Repetir Contraseña</ion-label>
+      <ion-input formControlName="confirmPassword" type="password"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.hasError('passwordMismatch') && perfilForm.get('confirmPassword')?.touched">
+      Las contraseñas no coinciden
+    </ion-text>
+
+    <ion-item class="rounded-item">
+      <ion-label>Fecha Nacimiento</ion-label>
+      <ion-input formControlName="fechaNacimiento" type="date" placeholder="dd/mm/yyyy"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="perfilForm.get('fechaNacimiento')?.hasError('required') && perfilForm.get('fechaNacimiento')?.touched">
+      Fecha de Nacimiento es requerida
+    </ion-text>
+
+    <ion-button class="small-button" expand="block" type="submit" [disabled]="perfilForm.invalid">Guardar</ion-button>
+  </form>
+</ion-content>

@@ -1,0 +1,34 @@
+<ion-app>
+  <!-- Menú lateral (hamburguesa) -->
+  <ion-menu side="end" contentId="main-content">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Menú</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="menu-background">
+      <ion-list>
+        <!-- Opciones del menú con íconos alineados a la izquierda -->
+        <ion-item button routerLink="/home" (click)="cerrarMenu()">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>Home</ion-label>
+        </ion-item>
+        <ion-item button routerLink="/mi-perfil" (click)="cerrarMenu()">
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-label>Mi Perfil</ion-label>
+        </ion-item>
+        <ion-item button routerLink="/mis-lecturas" (click)="cerrarMenu()">
+          <ion-icon name="book-outline" slot="start"></ion-icon>
+          <ion-label>Mis Lecturas</ion-label>
+        </ion-item>
+        <ion-item button (click)="logout()">
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
+          <ion-label>Salir</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <!-- Contenido principal de la aplicación -->
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-app>

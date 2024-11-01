@@ -1,0 +1,7 @@
+{
+  "name": "comentalibros",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}

@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mis Lecturas</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2 class="mejores-valorados">Mis Lecturas</h2>
+
+  <div *ngFor="let libro of misLecturas; let i = index" class="libro-container">
+    <ion-card class="libro-card">
+      <img [src]="libro.imagen" alt="Imagen del libro" class="libro-imagen" />
+      <ion-card-content>
+        <h3 class="libro-titulo">{{ libro.titulo }}</h3>
+        <p class="libro-detalle">Autor: {{ libro.autor }}</p>
+        <p class="libro-detalle">ISBN: {{ libro.isbn }}</p>
+        <ion-button color="danger" (click)="eliminarLectura(i)">
+          Eliminar
+        </ion-button>
+        <ion-button (click)="verDetalle(libro)">Ver Detalle</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
+
+

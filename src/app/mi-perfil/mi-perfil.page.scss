@@ -1,0 +1,73 @@
+/* Estilos para el toolbar */
+ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Mismo color de fondo que en las otras páginas */
+    height: 56px; /* Altura estándar */
+    display: flex;
+    align-items: center;
+}
+
+ion-header, ion-footer {
+    background-color: rgba(28, 30, 31, 0.2); /* Mismo color que los campos */    
+  }
+
+ion-item {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo claro para los campos */
+  }
+
+/* Estilo del logo */
+.logo {
+    width: 100px;
+    height: auto;
+}
+
+/* Fondo del contenido */
+ion-content {
+    --background: transparent; 
+    background-image: url('/assets/img/background.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center; 
+}
+
+/* Estilo para los campos de entrada redondeados */
+ion-item.rounded-item {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo claro */
+    border-radius: 20px; /* Bordes redondeados */
+    margin-top: 5px; /* Ajuste de margen superior */
+    margin-bottom: 15px; /* Ajuste de margen inferior */
+    padding: 10px;
+    --inner-padding-start: 15px; /* Padding interno */
+}
+
+/* Estilo para el botón "Guardar" */
+ion-button.small-button {
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 20px;
+    --background: #17416d; /* Usa el color del botón "Entrar" */
+    --color: white;
+    font-weight: bold;
+  }
+  
+
+/* Colores para ion-input y etiquetas */
+ion-input {
+    --color: #13555f;
+    padding-left: 10px; /* Ajuste de padding para el input */
+}
+
+ion-label {
+    color: #ADBABC;
+}
+
+/* Ajustes de margen para los campos */
+.custom-input {
+    margin-bottom: 16px; /* Espacio entre los campos */
+    border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Estilo para el calendario */
+ion-datetime {
+    --display: inline-block; /* Ocultar calendario hasta que se haga clic */
+    display: block;
+}

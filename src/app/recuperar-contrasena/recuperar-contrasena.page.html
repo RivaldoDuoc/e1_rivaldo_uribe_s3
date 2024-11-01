@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    </ion-buttons>
+    <ion-title>Recuperar Contraseña</ion-title>
+    <ion-buttons slot="end">
+      <!-- Botón de retroceso -->
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="recuperarForm" (ngSubmit)="recuperarContrasena()">
+    <ion-item class="rounded-item">
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input formControlName="email" type="email"></ion-input>
+    </ion-item>
+    <ion-text color="danger" *ngIf="recuperarForm.get('email')?.hasError('email') && recuperarForm.get('email')?.touched">
+      E-mail inválido
+    </ion-text>
+    
+    <ion-button class="small-button" expand="block" type="submit" [disabled]="recuperarForm.invalid">Enviar</ion-button>
+  </form>
+</ion-content>

@@ -1,0 +1,34 @@
+<ion-header>
+  <ion-toolbar>
+    <!-- Logo en la parte superior izquierda -->
+    <ion-buttons slot="start">
+      <img src="assets/img/logo.png" alt="Logo" class="logo" />
+    </ion-buttons>
+    <!-- Menú hamburguesa en la parte superior derecha -->
+    <ion-buttons slot="end">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Buscador de libros -->
+  <ion-searchbar placeholder="Buscar por título, autor o ISBN" (ionInput)="buscarLibro($event)"></ion-searchbar>
+
+  <!-- Título "Mejores Evaluados" centrado -->
+  <h2 class="mejores-valorados">Mejores Evaluados</h2>
+
+  <!-- Lista de libros mejor valorados -->
+  <div *ngFor="let libro of mejoresValorados" class="libro-container" (click)="verDetalle(libro)">
+    <ion-card class="libro-card">
+      <!-- Imagen del libro con tamaño ajustado -->
+      <img [src]="libro.imagen" alt="Imagen del libro" class="libro-imagen" />
+      <ion-card-content>
+        <!-- Título, autor e ISBN del libro con color y estilo personalizados -->
+        <h3 class="libro-titulo">{{ libro.titulo }}</h3>
+        <p class="libro-detalle">Autor: {{ libro.autor }}</p>
+        <p class="libro-detalle">ISBN: {{ libro.isbn }}</p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

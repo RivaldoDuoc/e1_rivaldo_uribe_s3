@@ -1,0 +1,51 @@
+/* Fondo de imagen para el menú desplegable */
+ion-menu .menu-background {
+    --background: transparent;
+    background-image: url('/assets/img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100%;
+    width: 100%;
+    color: white;
+}
+
+/* Fondo semitransparente más claro en los elementos del menú */
+ion-menu .menu-background ion-item {
+    --background: rgba(1, 7, 10, 0.15); /* Fondo más claro */
+    color: #17416d; /* Texto en blanco */
+}
+
+/* Encabezado del menú con fondo transparente */
+ion-menu ion-header {
+    --background: transparent;
+    background-image: url('/assets/img/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Fondo azulado en la barra de herramientas del menú */
+ion-menu ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo azulado */
+    color:#17416d; /* Texto en blanco */
+}
+
+/* Estilo del título en la barra de herramientas del menú */
+ion-menu ion-toolbar ion-title {
+    color: white;
+    font-weight: bold;
+}
+
+/* Ajustes adicionales para íconos y etiquetas en los ítems del menú */
+ion-menu ion-item ion-icon,
+ion-menu ion-item ion-label {
+    color: #17416d; /* Asegura que los íconos y texto sean blancos para mejor visibilidad */
+}
+
+  /* texto dentro del toolbar */
+  ion-menu ion-toolbar ion-title {
+    color: #17416d;
+    font-weight: bold;
+  }
+  

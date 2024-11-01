@@ -1,0 +1,60 @@
+/* Estilo del ion-toolbar en el encabezado */
+ion-toolbar {
+  --background: rgba(28, 30, 31, 0.2); /* Color de fondo del toolbar */
+  height: 56px; /* Altura estándar */
+  display: flex;
+  align-items: center; /* Alinea el contenido verticalmente */
+}
+
+
+/* Margen para el ion-searchbar */
+ion-searchbar {
+  margin: 20px 0;
+}
+
+/* Logo de la aplicación */
+.logo {
+  width: 100px; /* Tamaño del logo */
+  height: auto;
+}
+
+/* Estilo para el título "Mejores Valorados" */
+.mejores-valorados {
+  text-align: center; /* Centrado del texto */
+  color: #17416d; /* Color azul para el título */
+  font-size: 1.5em;
+  margin-top: 20px;
+}
+
+/* Estilo de fondo para el contenedor de cada libro */
+.libro-card {
+  background-image: url('/assets/img/background.jpg'); /* Imagen de fondo */
+  background-size: cover; /* Cubre todo el contenedor */
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px; /* Bordes redondeados */
+  padding: 10px;
+}
+
+/* Ajuste de tamaño de las imágenes de los libros */
+.libro-imagen {
+  width: 100%; /* Ancho completo del contenedor */
+  max-width: 90%; /* Limita el tamaño de la imagen para reducirla */
+  height: auto;
+  margin: 0 auto;
+  display: block;
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Estilo para el título de cada libro */
+.libro-titulo {
+  color: #17416d; /* Mismo color azul que "Mejores Valorados" */
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+/* Estilo para el autor y el ISBN de cada libro */
+.libro-detalle {
+  color: #17416d; /* Mismo color azul para detalles */
+  font-size: 0.9em;
+}

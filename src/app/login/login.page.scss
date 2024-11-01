@@ -1,0 +1,94 @@
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; 
+    margin-bottom: 10px;
+  
+    img.logo {
+      width: 300px; 
+      height: auto;
+      transition: transform 0.5s ease;
+    }
+  
+    &.animate img {
+      animation: bounce 0.5s infinite alternate;
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  /* Ajuste para los campos de entrada */
+  ion-item.rounded-item {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo claro */
+    border-radius: 10px; /* Bordes redondeados */
+    margin-top: 5px; /* Ajuste de margen superior */
+    margin-bottom: 15px;
+  }
+  
+  ion-button.small-button {
+    width: 50%; /* Botón reducido a la mitad del ancho de los campos */
+    margin: 0 auto; /* Centrar el botón */
+    margin-top: 20px;
+  }
+  
+  .footer-links {
+    margin-top: 30px;
+    text-align: center;
+  
+    ion-button {
+      color: #17416d;
+      font-weight: bold;
+    }
+  }
+  
+  /* Fondo y colores */
+  ion-content {
+    --background: transparent; 
+    background-image: url('/assets/img/background.jpg');
+    background-size: cover; 
+    background-repeat: no-repeat;
+    background-position: center; 
+  }
+  
+  ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Mismo color que los contenedores */
+  }
+  
+  ion-input {
+    --color: #13555f;
+  }
+  
+  ion-label {
+    color: #ADBABC;
+  }
+  
+  ion-header, ion-footer {
+    background-color: rgba(28, 30, 31, 0.2); /* Mismo color que los campos */
+  }
+  
+  ion-item {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo claro para los campos */
+  }
+  
+  .loader-container {
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    position: fixed; /* Posición fija para que esté centrado en toda la pantalla */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para resaltar el loader */
+    z-index: 10; /* Asegúrate de que esté por encima de otros elementos */
+  }
+  
+  
