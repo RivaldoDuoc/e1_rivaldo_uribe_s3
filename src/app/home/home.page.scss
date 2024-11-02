@@ -1,60 +1,91 @@
 /* Estilo del ion-toolbar en el encabezado */
 ion-toolbar {
-  --background: rgba(28, 30, 31, 0.2); /* Color de fondo del toolbar */
-  height: 56px; /* Altura estándar */
+  --background: rgba(28, 30, 31, 0.2); /* Color de fondo semitransparente para el toolbar */
+  height: 56px; /* Altura estándar del toolbar */
   display: flex;
-  align-items: center; /* Alinea el contenido verticalmente */
+  align-items: center; /* Alinea el contenido verticalmente en el centro */
 }
-
 
 /* Margen para el ion-searchbar */
 ion-searchbar {
-  margin: 20px 0;
+  margin: 20px 0; /* Margen superior e inferior para el campo de búsqueda */
 }
 
-/* Logo de la aplicación */
+/* Estilo del logo de la aplicación */
 .logo {
-  width: 100px; /* Tamaño del logo */
-  height: auto;
+  width: 100px; /* Ancho del logo */
+  height: auto; /* Altura automática para mantener la proporción */
 }
 
 /* Estilo para el título "Mejores Valorados" */
 .mejores-valorados {
-  text-align: center; /* Centrado del texto */
-  color: #17416d; /* Color azul para el título */
-  font-size: 1.5em;
-  margin-top: 20px;
+  text-align: center; /* Centra el texto horizontalmente */
+  color: #17416d; /* Color azul oscuro para el título */
+  font-size: 1.5em; /* Tamaño de fuente mayor para resaltar */
+  margin-top: 20px; /* Separación superior del título */
 }
 
 /* Estilo de fondo para el contenedor de cada libro */
 .libro-card {
-  background-image: url('/assets/img/background.jpg'); /* Imagen de fondo */
-  background-size: cover; /* Cubre todo el contenedor */
+  background-image: url('/assets/img/background.jpg'); /* Imagen de fondo para el contenedor */
+  background-size: cover; /* Ajusta la imagen para cubrir todo el contenedor */
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center; /* Centra la imagen de fondo */
   border-radius: 10px; /* Bordes redondeados */
-  padding: 10px;
+  padding: 10px; /* Espacio interior del contenedor */
+  margin: 10px; /* Espacio alrededor de cada tarjeta */
 }
 
 /* Ajuste de tamaño de las imágenes de los libros */
 .libro-imagen {
-  width: 100%; /* Ancho completo del contenedor */
-  max-width: 90%; /* Limita el tamaño de la imagen para reducirla */
-  height: auto;
-  margin: 0 auto;
+  width: 100%; /* La imagen ocupa el ancho completo del contenedor */
+  max-width: 90%; /* Limita el tamaño máximo de la imagen */
+  height: auto; /* Mantiene la proporción de la imagen */
+  margin: 0 auto; /* Centra la imagen en el contenedor */
   display: block;
-  border-radius: 10px; /* Bordes redondeados */
+  border-radius: 10px; /* Bordes redondeados para la imagen */
 }
 
 /* Estilo para el título de cada libro */
 .libro-titulo {
-  color: #17416d; /* Mismo color azul que "Mejores Valorados" */
-  font-size: 1.2em;
-  margin-bottom: 5px;
+  color: #17416d; /* Color azul para el título del libro */
+  font-size: 1.2em; /* Tamaño de fuente ligeramente mayor */
+  margin-bottom: 5px; /* Espacio inferior entre el título y el siguiente elemento */
 }
 
 /* Estilo para el autor y el ISBN de cada libro */
 .libro-detalle {
-  color: #17416d; /* Mismo color azul para detalles */
-  font-size: 0.9em;
+  color: #17416d; /* Color azul para el detalle del autor y ISBN */
+  font-size: 0.9em; /* Tamaño de fuente menor */
+}
+
+/* Ajustes de estilo para el ion-segment que permite distribuir los botones en varias líneas */
+ion-segment {
+  margin: 10px 0; /* Espacio superior e inferior */
+  width: 100%; /* Asegura que el segmento ocupe el ancho completo */
+  --indicator-color: #17416d; /* Color del indicador de categoría seleccionada */
+  display: flex;
+  flex-wrap: wrap; /* Permite que los botones se ajusten en varias líneas */
+  justify-content: space-around; /* Distribuye los botones de forma equitativa */
+}
+
+/* Ajuste de estilo para cada botón de categoría en ion-segment */
+ion-segment-button {
+  font-size: 13px; /* Tamaño de fuente adecuado para móviles */
+  padding: 8px; /* Espacio dentro del botón */
+  color: #17416d; /* Color de texto de los botones de categorías */
+  flex: 1 1 30%; /* Permite que cada botón ocupe un 30% del ancho, ajustándose automáticamente */
+  text-align: center; /* Centra el texto dentro del botón */
+}
+
+/* Estilos responsivos para mejorar la visualización en pantallas pequeñas */
+@media (max-width: 600px) {
+  ion-segment-button {
+    font-size: 12px; /* Ajuste del tamaño de fuente en pantallas pequeñas */
+    padding: 5px; /* Reduce el relleno para evitar desbordamientos */
+  }
+
+  .libro-card {
+    margin: 5px; /* Reducir márgenes en pantallas pequeñas */
+  }
 }

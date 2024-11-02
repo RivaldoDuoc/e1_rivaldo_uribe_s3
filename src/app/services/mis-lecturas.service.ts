@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class MisLecturasService {
   private lecturas = [
     {
-      imagen: 'assets/img/libro4.jpg',
+      imagen: 'assets/img/9786073238021.jpg',
       titulo: 'Cómo programar en Java',
       autor: 'Paul Deitel',
       isbn: '9786073238021',
@@ -17,7 +17,7 @@ export class MisLecturasService {
       ],
     },
     {
-      imagen: 'assets/img/libro5.jpg',
+      imagen: 'assets/img/9789871138906.jpg',
       titulo: 'La casa de los espíritus',
       autor: 'Isabel Allende',
       isbn: '9789871138906',
@@ -28,7 +28,7 @@ export class MisLecturasService {
       ],
     },
     {
-      imagen: 'assets/img/libro6.jpg',
+      imagen: 'assets/img/9788466340564.jpg',
       titulo: 'El diario de Anna Frank (novela ilustrada)',
       autor: 'Anna Frank',
       isbn: '9788466340564',

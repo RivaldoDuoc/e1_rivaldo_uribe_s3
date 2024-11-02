@@ -10,9 +10,9 @@ import { MisLecturasService } from '../services/mis-lecturas.service';
   styleUrls: ['./detalle.page.scss'],
 })
 export class DetallePage implements OnInit {
-  libro: any = {}; // Inicializa como un objeto vacío
-  valoracion: number = 3;
-  comentarioUsuario: string = '';
+  libro: any = {}; // Inicializo la variable 'libro' como un objeto vacío
+  valoracion: number = 3; // Valoración predeterminada del usuario
+  comentarioUsuario: string = ''; // Comentario ingresado por el usuario
 
   constructor(
     private route: ActivatedRoute,
@@ -22,34 +22,34 @@ export class DetallePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Obtiene el ISBN del libro desde los parámetros de la URL
+    // Obtengo el ISBN del libro desde los parámetros de la URL
     const isbn = this.route.snapshot.queryParamMap.get('isbn');
     
     if (isbn) {
-      // Primero intenta buscar el libro en MisLecturasService
+      // Intento primero buscar el libro en 'MisLecturasService'
       this.libro = this.misLecturasService.getLecturaPorISBN(isbn);
       
-      // Si no se encuentra en MisLecturas, busca en LibrosService
+      // Si no se encuentra en 'MisLecturas', lo busco en 'LibrosService'
       if (!this.libro) {
         this.libro = this.librosService.getLibroPorISBN(isbn);
       }
 
-      // Prueba de consola para verificar si se encontró el libro
+      // Mensaje de consola para verificar si se encontró el libro
       console.log('Libro encontrado:', this.libro);
     }
   }
 
-  // Método para enviar la valoración y mostrar el mensaje de agradecimiento
+  // Método para enviar la valoración y mostrar un mensaje de agradecimiento
   async enviarValoracion() {
-    // Agrega el comentario al libro
+    // Si el libro y sus comentarios existen, agrego el comentario del usuario
     if (this.libro && this.libro.comentarios) {
       this.libro.comentarios.push({
-        usuario: 'UsuarioActual', // Puedes reemplazarlo con el nombre del usuario actual
+        usuario: 'UsuarioActual', // Aquí puedo reemplazar con el nombre del usuario actual
         texto: this.comentarioUsuario,
       });
     }
 
-    // Muestra una alerta de agradecimiento
+    // Muestro una alerta de agradecimiento al usuario
     const alert = await this.alertController.create({
       header: 'Gracias',
       message: 'Gracias por evaluar este libro.',
@@ -58,7 +58,7 @@ export class DetallePage implements OnInit {
 
     await alert.present();
 
-    // Limpia el comentario y restablece la valoración
+    // Limpio el campo de comentario y restablezco la valoración
     this.comentarioUsuario = '';
     this.valoracion = 3;
   }

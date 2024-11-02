@@ -32,7 +32,7 @@ export class LoginPage {
 
   // Función para validar el formato del correo electrónico
   validarEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // Expresión regular básica para validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  
     return emailRegex.test(email);
   }
 
@@ -62,7 +62,7 @@ export class LoginPage {
       return;
     }
 
-    // Si todas las validaciones son correctas, iniciar la simulación de inicio de sesión
+    // Si todas las validaciones son correctas, inicia la simulación de inicio de sesión
     this.loading = true;
     await new Promise(resolve => setTimeout(resolve, 3000));  // Simula una espera de 3 segundos
     this.loading = false;

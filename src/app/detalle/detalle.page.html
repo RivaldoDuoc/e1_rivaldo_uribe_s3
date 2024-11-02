@@ -19,19 +19,19 @@
   </div>
 
   <!-- Información del libro -->
-  <h2>{{ libro.titulo }}</h2>
+  <h5>{{ libro.titulo }}</h5>
   <p><strong>Autor:</strong> {{ libro.autor }}</p>
   <p><strong>ISBN:</strong> {{ libro.isbn }}</p>
   <p><strong>Reseña:</strong> {{ libro.resena }}</p>
 
   <!-- Comentarios -->
-  <h3>Comentarios</h3>
+  <h6>Comentarios</h6>
   <div *ngFor="let comentario of libro.comentarios">
     <p><strong>{{ comentario.usuario }}:</strong> {{ comentario.texto }}</p>
   </div>
 
   <!-- Sección para valorar el libro -->
-  <h3>Valorar</h3>
+  <h6>Valorar</h6>
   <ion-item>
     <ion-label>Valoración:</ion-label>
     <ion-range min="1" max="5" [(ngModel)]="valoracion"></ion-range>

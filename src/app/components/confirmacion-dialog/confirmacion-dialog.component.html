@@ -1,8 +1,15 @@
+<!-- Este es el título del diálogo, se muestra dinámicamente según el valor de 'data.titulo' -->
 <h2 mat-dialog-title>{{ data.titulo }}</h2>
+
 <mat-dialog-content>
+  <!-- Aquí se muestra el mensaje del diálogo, el cual se pasa dinámicamente a través de 'data.mensaje' -->
   <p>{{ data.mensaje }}</p>
 </mat-dialog-content>
+
 <mat-dialog-actions align="end">
+  <!-- Botón para cancelar la acción. Ejecuta el método 'onCancelar()' al hacer clic -->
   <button mat-button (click)="onCancelar()">Cancelar</button>
+  
+  <!-- Botón para confirmar la acción. Ejecuta el método 'onConfirmar()' al hacer clic -->
   <button mat-button color="primary" (click)="onConfirmar()">Aceptar</button>
 </mat-dialog-actions>

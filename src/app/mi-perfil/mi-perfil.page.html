@@ -1,9 +1,12 @@
 <ion-header>
   <ion-toolbar>
+    <!-- Agrego el logo de la aplicación en el lado izquierdo del toolbar -->
     <ion-buttons slot="start">
       <img src="assets/img/logo.png" alt="Logo" class="logo" />
     </ion-buttons>
+    <!-- Título del formulario de registro de usuario -->
     <ion-title>Registro de Usuario</ion-title>
+    <!-- Botón de retroceso que lleva al login -->
     <ion-buttons slot="end">
       <ion-back-button defaultHref="/login"></ion-back-button>
     </ion-buttons>
@@ -11,13 +14,16 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  <!-- Inicio del formulario con enlace a perfilForm y al método de guardado -->
   <form [formGroup]="perfilForm" (ngSubmit)="guardarPerfil()">
     <mat-accordion>
+      <!-- Panel para información personal del usuario -->
       <mat-expansion-panel expanded>
         <mat-expansion-panel-header>
           <mat-panel-title>Información Personal</mat-panel-title>
         </mat-expansion-panel-header>
 
+        <!-- Campo para el nombre con validación de requerido -->
         <ion-item class="rounded-item">
           <ion-label position="floating">Nombre</ion-label>
           <ion-input formControlName="nombre" type="text"></ion-input>
@@ -26,6 +32,7 @@
           Nombre es requerido
         </ion-text>
 
+        <!-- Campo para los apellidos con validación de requerido -->
         <ion-item class="rounded-item">
           <ion-label position="floating">Apellidos</ion-label>
           <ion-input formControlName="apellidos" type="text"></ion-input>
@@ -34,6 +41,7 @@
           Apellidos son requeridos
         </ion-text>
 
+        <!-- Campo para la fecha de nacimiento con validación de requerido -->
         <ion-item class="rounded-item">
           <ion-label>Fecha Nacimiento</ion-label>
           <ion-input formControlName="fechaNacimiento" type="date" placeholder="dd/mm/yyyy"></ion-input>
@@ -43,11 +51,13 @@
         </ion-text>
       </mat-expansion-panel>
 
+      <!-- Panel para credenciales de cuenta -->
       <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>Credenciales de Cuenta</mat-panel-title>
         </mat-expansion-panel-header>
 
+        <!-- Campo de email con validación de formato -->
         <ion-item class="rounded-item">
           <ion-label position="floating">E-mail</ion-label>
           <ion-input formControlName="email" type="email"></ion-input>
@@ -56,6 +66,7 @@
           E-mail inválido
         </ion-text>
 
+        <!-- Campo de contraseña con validación de longitud -->
         <ion-item class="rounded-item">
           <ion-label position="floating">Contraseña</ion-label>
           <ion-input formControlName="password" type="password"></ion-input>
@@ -64,6 +75,7 @@
           La contraseña debe tener entre 4 y 6 caracteres
         </ion-text>
 
+        <!-- Campo de confirmación de contraseña con validación de coincidencia -->
         <ion-item class="rounded-item">
           <ion-label position="floating">Repetir Contraseña</ion-label>
           <ion-input formControlName="confirmPassword" type="password"></ion-input>
@@ -74,6 +86,7 @@
       </mat-expansion-panel>
     </mat-accordion>
 
+    <!-- Botón para guardar el formulario, deshabilitado si es inválido -->
     <ion-button class="small-button" expand="block" type="submit" [disabled]="perfilForm.invalid">Guardar</ion-button>
   </form>
 </ion-content>

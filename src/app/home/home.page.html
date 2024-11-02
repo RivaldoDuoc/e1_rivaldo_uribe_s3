@@ -15,11 +15,27 @@
   <!-- Buscador de libros -->
   <ion-searchbar placeholder="Buscar por título, autor o ISBN" (ionInput)="buscarLibro($event)"></ion-searchbar>
 
-  <!-- Título "Mejores Evaluados" centrado -->
-  <h2 class="mejores-valorados">Mejores Evaluados</h2>
+  <!-- Segmento para seleccionar diferentes categorías de libros -->
+  <ion-segment [(ngModel)]="categoriaSeleccionada" (ionChange)="cambiarCategoria()">
+    <ion-segment-button value="mejores">
+      + Valorados
+    </ion-segment-button>
+    <ion-segment-button value="recientes">
+      + Recientes
+    </ion-segment-button>
+    <ion-segment-button value="populares">
+      Populares
+    </ion-segment-button>
+    <ion-segment-button value="recomendados">
+      Recomendados
+    </ion-segment-button>
+    <ion-segment-button value="clasicos">
+      Clásicos
+    </ion-segment-button>
+  </ion-segment>
 
-  <!-- Lista de libros mejor valorados -->
-  <div *ngFor="let libro of mejoresValorados" class="libro-container" (click)="verDetalle(libro)">
+  <!-- Lista de libros según la categoría seleccionada -->
+  <div *ngFor="let libro of librosFiltrados" class="libro-container" (click)="verDetalle(libro)">
     <ion-card class="libro-card">
       <!-- Imagen del libro con tamaño ajustado -->
       <img [src]="libro.imagen" alt="Imagen del libro" class="libro-imagen" />
@@ -32,3 +48,4 @@
     </ion-card>
   </div>
 </ion-content>
+
