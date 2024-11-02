@@ -4,43 +4,43 @@ ion-toolbar {
     height: 56px; /* Altura estándar */
     display: flex;
     align-items: center;
-}
-
-ion-header, ion-footer {
+  }
+  
+  ion-header, ion-footer {
     background-color: rgba(28, 30, 31, 0.2); /* Mismo color que los campos */    
   }
-
-ion-item {
+  
+  ion-item {
     --background: rgba(28, 30, 31, 0.2); /* Fondo claro para los campos */
   }
-
-/* Estilo del logo */
-.logo {
+  
+  /* Estilo del logo */
+  .logo {
     width: 100px;
     height: auto;
-}
-
-/* Fondo del contenido */
-ion-content {
+  }
+  
+  /* Fondo del contenido */
+  ion-content {
     --background: transparent; 
     background-image: url('/assets/img/background.jpg');
     background-size: cover; 
     background-repeat: no-repeat;
-    background-position: center; 
-}
-
-/* Estilo para los campos de entrada redondeados */
-ion-item.rounded-item {
+    background-position: center;
+  }
+  
+  /* Estilo para los campos de entrada redondeados */
+  ion-item.rounded-item {
     --background: rgba(28, 30, 31, 0.2); /* Fondo claro */
     border-radius: 20px; /* Bordes redondeados */
     margin-top: 5px; /* Ajuste de margen superior */
     margin-bottom: 15px; /* Ajuste de margen inferior */
     padding: 10px;
     --inner-padding-start: 15px; /* Padding interno */
-}
-
-/* Estilo para el botón "Guardar" */
-ion-button.small-button {
+  }
+  
+  /* Estilo para el botón "Guardar" */
+  ion-button.small-button {
     width: 50%;
     margin: 0 auto;
     margin-top: 20px;
@@ -49,25 +49,48 @@ ion-button.small-button {
     font-weight: bold;
   }
   
-
-/* Colores para ion-input y etiquetas */
-ion-input {
+  /* Colores para ion-input y etiquetas */
+  ion-input {
     --color: #13555f;
     padding-left: 10px; /* Ajuste de padding para el input */
-}
-
-ion-label {
+  }
+  
+  ion-label {
     color: #ADBABC;
-}
-
-/* Ajustes de margen para los campos */
-.custom-input {
+  }
+  
+  /* Ajustes de margen para los campos */
+  .custom-input {
     margin-bottom: 16px; /* Espacio entre los campos */
     border-radius: 10px; /* Bordes redondeados */
-}
-
-/* Estilo para el calendario */
-ion-datetime {
+  }
+  
+  /* Estilo para el calendario */
+  ion-datetime {
     --display: inline-block; /* Ocultar calendario hasta que se haga clic */
     display: block;
-}
+  }
+  
+  /* Estilos para MatExpansionPanel */
+  mat-expansion-panel {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo similar al resto de los campos */
+    margin-top: 10px;
+    border-radius: 15px; /* Bordes redondeados para los paneles */
+  }
+  
+  mat-expansion-panel-header {
+    color: #ADBABC; /* Color del texto */
+    font-weight: bold;
+    font-size: 16px;
+    border-bottom: 1px solid #17416d;
+  }
+  
+  mat-expansion-panel-body {
+    padding: 15px;
+  }
+  
+  /* Personalización de los iconos de expansión */
+  mat-expansion-panel-header.mat-expanded .mat-expansion-indicator::after {
+    transform: rotate(180deg);
+  }
+  

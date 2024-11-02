@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AlertController } from '@ionic/angular';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { ConfirmacionDialogComponent } from '../components/confirmacion-dialog/confirmacion-dialog.component';
 
 @Component({
   selector: 'app-mi-perfil',
@@ -9,15 +10,13 @@ import { Router } from '@angular/router';
   styleUrls: ['./mi-perfil.page.scss'],
 })
 export class MiPerfilPage implements OnInit {
-  perfilForm: FormGroup = this.fb.group({}); // Inicializa perfilForm como un FormGroup vacío
+  perfilForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private alertController: AlertController,
+    private dialog: MatDialog,
     private router: Router
-  ) {}
-
-  ngOnInit() {
+  ) {
     this.perfilForm = this.fb.group({
       nombre: ['', Validators.required],
       apellidos: ['', Validators.required],
@@ -28,32 +27,35 @@ export class MiPerfilPage implements OnInit {
     }, { validator: this.passwordMatchValidator });
   }
 
+  ngOnInit(): void {}
+
   passwordMatchValidator(form: FormGroup) {
-    const passwordControl = form.get('password');
-    const confirmPasswordControl = form.get('confirmPassword');
-    
-    return passwordControl && confirmPasswordControl && passwordControl.value === confirmPasswordControl.value 
-      ? null 
-      : { passwordMismatch: true };
+    const password = form.get('password')?.value;
+    const confirmPassword = form.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  async guardarPerfil() {
+  guardarPerfil(): void {
     if (this.perfilForm.valid) {
-      const alert = await this.alertController.create({
-        header: 'Perfil Guardado',
-        message: 'Sus datos han sido guardados correctamente.',
-        buttons: ['OK']
+      const dialogRef = this.dialog.open(ConfirmacionDialogComponent, {
+        data: {
+          titulo: 'Guardar Perfil de Usuario',
+          mensaje: '¿Está seguro que desea guardar?',
+        }
       });
-      await alert.present();
-      await alert.onDidDismiss();  // Espera a que el usuario cierre el alert antes de navegar
-      this.router.navigate(['/login']);  // Navega a la página de login
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.router.navigate(['/login']);
+        }
+      });
     } else {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Por favor complete todos los campos correctamente.',
-        buttons: ['OK']
+      this.dialog.open(ConfirmacionDialogComponent, {
+        data: {
+          titulo: 'Error',
+          mensaje: 'Por favor complete todos los campos correctamente.',
+        }
       });
-      await alert.present();
     }
   }
 }

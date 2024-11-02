@@ -40,19 +40,19 @@ export class LoginPage {
   async login() {
     // Verificar que el campo de correo no esté vacío
     if (!this.email) {
-      this.mostrarAlerta('El campo de correo no puede estar vacío.');
+      this.mostrarAlerta('Debe ingresar un e-mail válido');
       return;
     }
 
     // Validar el formato del correo
     if (!this.validarEmail(this.email)) {
-      this.mostrarAlerta('El formato del correo es inválido.');
+      this.mostrarAlerta('Formato de e-mail inválido');
       return;
     }
 
     // Verificar que la contraseña no esté vacía
     if (!this.password) {
-      this.mostrarAlerta('El campo de contraseña no puede estar vacío.');
+      this.mostrarAlerta('Debe ingresar una contraseña');
       return;
     }
 

@@ -7,7 +7,7 @@
 
 <ion-content class="ion-padding">
   <!-- Sección del logo de la aplicación -->
-  <div class="logo-container" [class.animate]="!loading">
+  <div class="logo-container" [class.animate-opacity]="!loading">
     <img src="assets/img/logo.png" alt="Logo" class="logo" />
   </div>
 
@@ -34,13 +34,12 @@
 
   <!-- Enlaces de recuperación de contraseña y registro -->
   <div class="footer-links">
-    <ion-button fill="clear"  routerLink="/recuperar-contrasena">
+    <ion-button fill="clear" routerLink="/recuperar-contrasena">
       Recuperar Contraseña
     </ion-button> <br>
 
-    <ion-button fill="clear"  (click)="irARegistro()">
+    <ion-button fill="clear" (click)="irARegistro()">
       Registro
     </ion-button>
   </div>
-
 </ion-content>
