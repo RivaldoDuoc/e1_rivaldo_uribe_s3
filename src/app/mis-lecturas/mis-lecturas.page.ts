@@ -14,7 +14,7 @@ export class MisLecturasPage implements OnInit {
   misLecturas: any[] = []; // Lista de libros cargados
   buscarForm: FormGroup;
   mensajeError: string = '';
-  usuarioId: number = 1; // ID del usuario actual (debe obtenerse mediante autenticación)
+  usuarioId: number = 1; // ID del usuario actual (obtener mediante autenticación)
 
   constructor(
     private apiLibrosService: ApiLibrosService,
@@ -37,7 +37,7 @@ export class MisLecturasPage implements OnInit {
       console.log('Usuario logueado:', usuarioLogueado);
 
       if (usuarioLogueado) {
-        this.usuarioId = usuarioLogueado.id; // Asignamos el ID del usuario logueado
+        this.usuarioId = usuarioLogueado.id; // Asigna el ID del usuario logueado
         await this.cargarLecturas();
       } else {
         this.mostrarMensajeError('Usuario no encontrado. Por favor, inicia sesión nuevamente.');

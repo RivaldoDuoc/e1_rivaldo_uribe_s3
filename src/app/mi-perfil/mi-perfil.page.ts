@@ -42,7 +42,7 @@ export class MiPerfilPage implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.storage.create(); // Asegurar que el almacenamiento esté listo
+    await this.storage.create(); // Asegura que el almacenamiento esté listo
 
     // Verificar si se accede desde el login (registro)
     const isRegistro = this.route.snapshot.queryParamMap.get('registro') === 'true';

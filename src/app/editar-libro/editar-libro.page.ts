@@ -136,8 +136,8 @@ export class EditarLibroPage {
         quality: 90,
         resultType: CameraResultType.Base64,
         source: CameraSource.Camera,
-        direction: CameraDirection.Rear, // Asegura que use la cámara trasera
-        correctOrientation: true, // Ajusta automáticamente la orientación
+        direction: CameraDirection.Rear, // Asegura que se use la cámara trasera
+        correctOrientation: true, // Ajusta automáticamente la orientación de la fotografía
       });
 
       if (photo && photo.base64String) {
