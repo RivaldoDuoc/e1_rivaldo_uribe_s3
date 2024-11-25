@@ -82,6 +82,7 @@ export class LoginPage {
   }
 
   irARegistro() {
-    this.router.navigate(['/mi-perfil']);
+    this.router.navigate(['/mi-perfil'], { queryParams: { registro: 'true' } });
   }
+  
 }

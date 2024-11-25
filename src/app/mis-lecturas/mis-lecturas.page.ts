@@ -192,4 +192,4 @@ export class MisLecturasPage implements OnInit {
 
     await modal.present();
   }
-}
+} 

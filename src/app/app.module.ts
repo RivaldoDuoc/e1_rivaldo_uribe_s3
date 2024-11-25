@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { IonicStorageModule } from '@ionic/storage-angular'; // Asegúrate de importar esto
+import { IonicStorageModule } from '@ionic/storage-angular'; 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -20,7 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    IonicStorageModule.forRoot(), // Configura el módulo aquí
+    IonicStorageModule.forRoot(), 
     BrowserAnimationsModule,
     HttpClientModule,
   ],
