@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ConfirmacionDialogComponent } from '../components/confirmacion-dialog/confirmacion-dialog.component';
+import { DbService } from '../services/db.service'; // Importar el servicio de SQLite
 
 @Component({
   selector: 'app-mi-perfil',
@@ -10,57 +11,98 @@ import { ConfirmacionDialogComponent } from '../components/confirmacion-dialog/c
   styleUrls: ['./mi-perfil.page.scss'],
 })
 export class MiPerfilPage implements OnInit {
-  perfilForm: FormGroup; // Defino el formulario para el perfil de usuario
+  perfilForm: FormGroup; // Formulario del perfil
+  isFirstUser: boolean = false; // Verifica si es el primer usuario
+  tipoUsuario: string = 'user'; // Por defecto, los usuarios son de tipo 'user'
 
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private router: Router
+    private router: Router,
+    private dbService: DbService // Inyectar el servicio de SQLite
   ) {
-    // Configuro el formulario de perfil con validaciones en cada campo
-    this.perfilForm = this.fb.group({
-      nombre: ['', Validators.required],
-      apellidos: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(6)]],
-      confirmPassword: ['', Validators.required],
-      fechaNacimiento: ['', Validators.required],
-    }, { validator: this.passwordMatchValidator }); // Agrego la validación personalizada para contraseñas
+    // Inicializar el formulario con validaciones
+    this.perfilForm = this.fb.group(
+      {
+        nombre: ['', Validators.required],
+        apellidos: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [Validators.required, Validators.minLength(4), Validators.maxLength(6)],
+        ],
+        confirmPassword: ['', Validators.required],
+        fechaNacimiento: ['', Validators.required],
+      },
+      { validator: this.passwordMatchValidator }
+    );
   }
 
-  ngOnInit(): void {}
+  async ngOnInit(): Promise<void> {
+    // Verificar si es el primer usuario registrado
+    const users = await this.dbService.getAllUsers();
+    this.isFirstUser = users.length === 0;
 
-  // Función para validar que las contraseñas coincidan
+    // Si es el primer usuario, permitir el rol "admin"
+    if (this.isFirstUser) {
+      this.tipoUsuario = 'admin';
+    }
+  }
+
+  // Validador personalizado para confirmar que las contraseñas coincidan
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password')?.value;
     const confirmPassword = form.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
-  // Método para guardar el perfil de usuario, mostrando confirmación según la validez del formulario
-  guardarPerfil(): void {
+  // Guardar perfil de usuario
+  async guardarPerfil(): Promise<void> {
     if (this.perfilForm.valid) {
-      // Si el formulario es válido, abro un diálogo de confirmación
+      // Mostrar un diálogo de confirmación
       const dialogRef = this.dialog.open(ConfirmacionDialogComponent, {
         data: {
           titulo: 'Guardar Perfil de Usuario',
           mensaje: '¿Está seguro que desea guardar?',
-        }
+        },
       });
 
-      // Si el usuario confirma, navego a la página de login
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(async (result) => {
         if (result) {
-          this.router.navigate(['/login']);
+          // Extraer datos del formulario
+          const { nombre, apellidos, email, password, fechaNacimiento } =
+            this.perfilForm.value;
+
+          try {
+            // Guardar usuario en la base de datos
+            await this.dbService.addUser(
+              nombre,
+              apellidos,
+              fechaNacimiento,
+              email,
+              password,
+              this.tipoUsuario
+            );
+            // Redirigir al login después de guardar
+            this.router.navigate(['/login']);
+          } catch (error) {
+            // Mostrar error si el email ya está registrado
+            this.dialog.open(ConfirmacionDialogComponent, {
+              data: {
+                titulo: 'Error',
+                mensaje: 'El email ingresado ya está registrado.',
+              },
+            });
+          }
         }
       });
     } else {
-      // Si el formulario no es válido, muestro un diálogo de error
+      // Mostrar un mensaje si el formulario no es válido
       this.dialog.open(ConfirmacionDialogComponent, {
         data: {
           titulo: 'Error',
           mensaje: 'Por favor complete todos los campos correctamente.',
-        }
+        },
       });
     }
   }

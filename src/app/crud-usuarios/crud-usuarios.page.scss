@@ -1,0 +1,31 @@
+ion-toolbar {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo semitransparente */
+    height: 56px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo {
+    width: 100px; /* Tamaño del logo */
+    height: auto;
+  }
+  
+  ion-content {
+    --background: transparent;
+    background-image: url('/assets/img/background.jpg'); /* Fondo coherente */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  
+  ion-item {
+    --background: rgba(28, 30, 31, 0.2); /* Fondo de los campos */
+    border-radius: 10px;
+  }
+  
+  ion-button {
+    --background: #17416d; /* Botones azules */
+    --color: white;
+    margin-top: 10px;
+  }
+  

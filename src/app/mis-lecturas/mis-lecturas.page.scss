@@ -39,4 +39,12 @@ ion-toolbar {
   .libro-titulo, .libro-detalle {
     color: #17416d;
   }
+
+  .vista-previa {
+    width: 100%; /* Imagen ocupa el ancho completo del contenedor */
+    height: auto; /* Mantiene la proporción */
+    margin-top: 10px; /* Margen superior */
+    border-radius: 8px; /* Bordes redondeados */
+  }
+  
   

@@ -51,3 +51,4 @@ export class HomePage implements OnInit {
     this.router.navigate(['/detalle'], { queryParams: { isbn: libro.isbn } });
   }
 }
+
