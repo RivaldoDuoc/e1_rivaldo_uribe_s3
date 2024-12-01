@@ -12,11 +12,13 @@ export class DbService {
     this.sqlite = new SQLiteConnection(CapacitorSQLite);
   }
 
-  async createDatabase() {
+  // Inicializa y crea la base de datos si no está lista
+  async createDatabase(): Promise<void> {
     try {
-      // Crear conexión a la base de datos
-      this.db = await this.sqlite.createConnection('appDB', false, 'no-encryption', 1, false);
+      console.log('Iniciando conexión con SQLite...');
+      this.db = await this.sqlite.createConnection('appDBSQLite', false, 'no-encryption', 1, false);
       await this.db.open();
+      console.log('Conexión SQLite abierta.');
 
       // Crear tabla de usuarios
       const userQuery = `
@@ -31,8 +33,9 @@ export class DbService {
         );
       `;
       await this.db.execute(userQuery);
+      console.log('Tabla de usuarios creada/verificada.');
 
-      // Crear tabla de libros con relación a usuarios
+      // Crear tabla de libros
       const bookQuery = `
         CREATE TABLE IF NOT EXISTS libros (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,18 +44,36 @@ export class DbService {
           isbn TEXT UNIQUE NOT NULL,
           imagen TEXT NOT NULL,
           resena TEXT,
-          valoracion INTEGER DEFAULT 0, -- Nueva columna para valoración
-          comentarios TEXT, -- Nueva columna para comentarios
-          usuarioId INTEGER NOT NULL, -- Relación con tabla de usuarios
+          valoracion INTEGER DEFAULT 0,
+          comentarios TEXT,
+          usuarioId INTEGER NOT NULL,
           FOREIGN KEY (usuarioId) REFERENCES users(id) ON DELETE CASCADE
         );
       `;
       await this.db.execute(bookQuery);
+      console.log('Tabla de libros creada/verificada.');
+    } catch (error: any) {
+      console.error('Error al inicializar la base de datos:', error.message || error);
 
-      console.log('Base de datos inicializada correctamente.');
-    } catch (error) {
-      console.error('Error al inicializar la base de datos:', error);
-      throw new Error('Error al crear la base de datos.');
+      // Intentar cerrar la conexión si algo falla
+      if (this.db) {
+        try {
+          await this.sqlite.closeConnection('appDBSQLite', false);
+          console.log('Conexión cerrada tras fallo.');
+        } catch (closeError: any) {
+          console.error('Error al cerrar la conexión tras fallo:', closeError.message || closeError);
+        }
+      }
+
+      throw error; // Re-lanzar el error para manejarlo en la llamada superior
+    }
+  }
+
+  // Asegura que la base de datos está inicializada antes de operar
+  async initializeDatabase(): Promise<void> {
+    if (!this.db) {
+      console.log('Inicializando base de datos...');
+      await this.createDatabase();
     }
   }
 
@@ -60,35 +81,43 @@ export class DbService {
   // Métodos para manejar la tabla de usuarios
   // --------------------------------------
 
-  async addUser(nombre: string, apellidos: string, fechaNacimiento: string, email: string, password: string, tipoUsuario: string) {
+  async addUser(nombre: string, apellidos: string, fechaNacimiento: string, email: string, password: string, tipoUsuario: string): Promise<void> {
     try {
+      await this.initializeDatabase();
       const query = `
-        INSERT INTO users (nombre, apellidos, fechaNacimiento, email, password, tipoUsuario) 
+        INSERT INTO users (nombre, apellidos, fechaNacimiento, email, password, tipoUsuario)
         VALUES (?, ?, ?, ?, ?, ?);
       `;
       await this.db?.run(query, [nombre, apellidos, fechaNacimiento, email, password, tipoUsuario]);
-      console.log('Usuario agregado correctamente.');
-    } catch (error) {
-      console.error('Error al agregar usuario:', error);
-      throw new Error('No se pudo agregar el usuario.');
+      console.log('Usuario agregado correctamente en SQLite.');
+    } catch (error: any) {
+      console.error('Error en addUser:', error.message || error);
+      if (error.message?.includes('UNIQUE constraint failed')) {
+        throw new Error('El email ya está registrado.');
+      }
+      throw error;
     }
   }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<any> {
     try {
+      await this.initializeDatabase();
       const query = `SELECT * FROM users WHERE email = ?;`;
       const result = await this.db?.query(query, [email]);
+      console.log('Usuario encontrado:', result?.values?.[0]);
       return result?.values?.[0] || null;
     } catch (error) {
       console.error('Error al obtener usuario por email:', error);
       throw new Error('No se pudo encontrar el usuario.');
     }
   }
-  
-  async getAllUsers() {
+
+  async getAllUsers(): Promise<any[]> {
     try {
+      await this.initializeDatabase();
       const query = `SELECT * FROM users;`;
       const result = await this.db?.query(query);
+      console.log('Usuarios obtenidos:', result?.values);
       return result?.values || [];
     } catch (error) {
       console.error('Error al obtener usuarios:', error);
@@ -98,6 +127,7 @@ export class DbService {
 
   async deleteUser(userId: number): Promise<void> {
     try {
+      await this.initializeDatabase();
       const query = `DELETE FROM users WHERE id = ?;`;
       await this.db?.run(query, [userId]);
       console.log('Usuario eliminado correctamente.');
@@ -109,6 +139,7 @@ export class DbService {
 
   async updateUser(userId: number, nombre: string, apellidos: string, fechaNacimiento: string, email: string, password: string, tipoUsuario: string): Promise<void> {
     try {
+      await this.initializeDatabase();
       const query = `
         UPDATE users SET nombre = ?, apellidos = ?, fechaNacimiento = ?, email = ?, password = ?, tipoUsuario = ? 
         WHERE id = ?;
@@ -123,6 +154,7 @@ export class DbService {
 
   async countAdmins(): Promise<number> {
     try {
+      await this.initializeDatabase();
       const query = `SELECT COUNT(*) as adminCount FROM users WHERE tipoUsuario = 'admin';`;
       const result = await this.db?.query(query);
       return result?.values?.[0]?.adminCount || 0;
@@ -138,30 +170,31 @@ export class DbService {
 
   async agregarLibro(libro: any, usuarioId: number): Promise<void> {
     try {
+      await this.initializeDatabase();
       const query = `
         INSERT INTO libros (titulo, autor, isbn, imagen, resena, valoracion, comentarios, usuarioId)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?);
       `;
-      const params = [
+      await this.db?.run(query, [
         libro.titulo,
         libro.autor,
         libro.isbn,
         libro.imagen,
-        libro.resena,
+        libro.resena || '',
         libro.valoracion || 0,
         libro.comentarios || '',
         usuarioId,
-      ];
-      await this.db?.run(query, params);
+      ]);
       console.log('Libro agregado correctamente.');
     } catch (error) {
       console.error('Error al agregar libro:', error);
       throw new Error('No se pudo agregar el libro.');
     }
   }
-  
+
   async obtenerLibros(usuarioId: number): Promise<any[]> {
     try {
+      await this.initializeDatabase();
       const query = `SELECT * FROM libros WHERE usuarioId = ?;`;
       const result = await this.db?.query(query, [usuarioId]);
       console.log('Libros obtenidos para el usuario:', result?.values);
@@ -171,11 +204,10 @@ export class DbService {
       throw new Error('No se pudieron obtener los libros.');
     }
   }
-  
-  
 
   async eliminarLibro(isbn: string): Promise<void> {
     try {
+      await this.initializeDatabase();
       const query = `DELETE FROM libros WHERE isbn = ?;`;
       await this.db?.run(query, [isbn]);
       console.log('Libro eliminado correctamente.');
@@ -188,37 +220,25 @@ export class DbService {
   async actualizarLibro(libro: any): Promise<void> {
     try {
       const query = `
-        UPDATE libros SET titulo = ?, autor = ?, imagen = ?, resena = ?, valoracion = ?, comentarios = ? 
+        UPDATE libros 
+        SET titulo = ?, autor = ?, resena = ?, valoracion = ?, comentarios = ?, imagen = ? 
         WHERE isbn = ?;
       `;
       const params = [
         libro.titulo,
         libro.autor,
-        libro.imagen,
         libro.resena,
         libro.valoracion,
         libro.comentarios,
+        libro.imagen,
         libro.isbn,
       ];
       await this.db?.run(query, params);
-      console.log('Libro actualizado correctamente.');
+      console.log('Libro actualizado correctamente en la base de datos.');
     } catch (error) {
-      console.error('Error al actualizar libro:', error);
-      throw new Error('No se pudo actualizar el libro.');
+      console.error('Error al actualizar el libro:', error);
+      throw error;
     }
   }
-
-  async obtenerLibroPorISBN(isbn: string): Promise<any> {
-    try {
-      const query = `SELECT * FROM libros WHERE isbn = ?;`;
-      const result = await this.db?.query(query, [isbn]);
-      return result?.values?.[0] || null;
-    } catch (error) {
-      console.error('Error al obtener libro por ISBN:', error);
-      throw new Error('No se pudo encontrar el libro.');
-    }
-  }
-
-
   
 }

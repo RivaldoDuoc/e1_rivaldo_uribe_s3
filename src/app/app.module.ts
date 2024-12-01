@@ -12,6 +12,8 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
+
+
 @NgModule({
   declarations: [AppComponent],
   imports: [

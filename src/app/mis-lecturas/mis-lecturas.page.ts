@@ -14,7 +14,8 @@ export class MisLecturasPage implements OnInit {
   misLecturas: any[] = []; // Lista de libros cargados
   buscarForm: FormGroup;
   mensajeError: string = '';
-  usuarioId: number = 1; // ID del usuario actual (obtener mediante autenticación)
+  resultadoBusqueda: any = null; // Resultado de la búsqueda
+  usuarioId: number = 0; // ID del usuario actual
 
   constructor(
     private apiLibrosService: ApiLibrosService,
@@ -30,27 +31,106 @@ export class MisLecturasPage implements OnInit {
 
   async ngOnInit() {
     const usuarioEmail = localStorage.getItem('usuarioEmail');
-    console.log('Email recuperado del localStorage:', usuarioEmail);
-
     if (usuarioEmail) {
       const usuarioLogueado = await this.dbService.getUserByEmail(usuarioEmail);
-      console.log('Usuario logueado:', usuarioLogueado);
-
       if (usuarioLogueado) {
-        this.usuarioId = usuarioLogueado.id; // Asigna el ID del usuario logueado
+        this.usuarioId = usuarioLogueado.id;
         await this.cargarLecturas();
       } else {
         this.mostrarMensajeError('Usuario no encontrado. Por favor, inicia sesión nuevamente.');
       }
     } else {
-      this.mostrarMensajeError('No se encontró el email del usuario en el almacenamiento local. Por favor, inicia sesión.');
+      this.mostrarMensajeError('No se encontró el email del usuario. Por favor, inicia sesión.');
     }
   }
 
-  /**
-   * Mostrar mensaje de error en un alert.
-   * @param mensaje Mensaje a mostrar.
-   */
+  async cargarLecturas() {
+    try {
+      this.misLecturas = await this.dbService.obtenerLibros(this.usuarioId);
+      if (!this.misLecturas.length) {
+        console.log('No hay libros agregados.');
+      }
+    } catch (error) {
+      console.error('Error al cargar lecturas:', error);
+    }
+  }
+
+  async buscarLibro() {
+    const datoBusqueda = this.buscarForm.get('datoBusqueda')?.value;
+    if (!datoBusqueda) {
+      this.mensajeError = 'Debes ingresar un título o ISBN válido.';
+      return;
+    }
+
+    try {
+      const response = await this.apiLibrosService.buscarLibro(datoBusqueda).toPromise();
+      if (response) {
+        this.resultadoBusqueda = response;
+      } else {
+        this.mensajeError = 'No se encontraron resultados.';
+      }
+    } catch (error) {
+      console.error('Error al buscar libro en la API:', error);
+      this.mensajeError = 'Hubo un problema al buscar el libro.';
+    }
+  }
+
+  async guardarLibroDesdeAPI(libro: any) {
+    try {
+      const nuevoLibro = { ...libro, usuarioId: this.usuarioId };
+      await this.dbService.agregarLibro(nuevoLibro, this.usuarioId);
+      this.misLecturas = [...this.misLecturas, nuevoLibro];
+      this.resultadoBusqueda = null; // Limpia el resultado de búsqueda
+    } catch (error) {
+      console.error('Error al guardar libro:', error);
+    }
+  }
+
+  async editarLibro(libro: any) {
+    const modal = await this.modalController.create({
+      component: EditarLibroPage,
+      componentProps: { libro },
+    });
+
+    modal.onDidDismiss().then(async (result: { data?: any; role?: string }) => {
+      if (result.data) {
+        const index = this.misLecturas.findIndex((l) => l.isbn === libro.isbn);
+        if (index > -1) {
+          this.misLecturas[index] = result.data;
+          await this.dbService.actualizarLibro(result.data);
+        }
+      }
+    });
+
+    await modal.present();
+  }
+
+  async confirmarEliminar(isbn: string) {
+    const alert = await this.alertController.create({
+      header: 'Eliminar',
+      message: '¿Deseas eliminar este libro?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            await this.eliminarLibro(isbn);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async eliminarLibro(isbn: string) {
+    try {
+      await this.dbService.eliminarLibro(isbn);
+      this.misLecturas = this.misLecturas.filter((libro) => libro.isbn !== isbn);
+    } catch (error) {
+      console.error('Error al eliminar libro:', error);
+    }
+  }
+
   async mostrarMensajeError(mensaje: string) {
     const alert = await this.alertController.create({
       header: 'Error',
@@ -59,137 +139,4 @@ export class MisLecturasPage implements OnInit {
     });
     await alert.present();
   }
-
-  /**
-   * Cargar libros desde la base de datos local.
-   */
-  async cargarLecturas() {
-    try {
-      this.misLecturas = await this.dbService.obtenerLibros(this.usuarioId);
-      console.log('Lecturas cargadas desde la base de datos:', this.misLecturas);
-    } catch (error) {
-      console.error('Error al cargar lecturas desde la base de datos:', error);
-    }
-  }
-
-  /**
-   * Buscar libro en la API y agregarlo a la lista.
-   */
-  async buscarLibro() {
-    const datoBusqueda = this.buscarForm.get('datoBusqueda')?.value;
-  
-    if (!datoBusqueda) {
-      this.mensajeError = 'Debes ingresar un ISBN o título válido.';
-      return;
-    }
-  
-    this.apiLibrosService.buscarLibro(datoBusqueda).subscribe(
-      async (response) => {
-        if (response) {
-          const nuevoLibro = {
-            titulo: response.titulo,
-            autor: response.autor,
-            isbn: response.isbn,
-            imagen: response.imagen,
-            resena: response.reseña,
-            valoracion: 0,
-            comentarios: '',
-          };
-  
-          // Guardar libro en la base de datos y lista local
-          await this.agregarLibro(nuevoLibro);
-          this.misLecturas.push(nuevoLibro);
-          this.buscarForm.reset();
-          this.mensajeError = ''; // Limpiar mensaje de error
-        } else {
-          this.mensajeError = 'No se encontraron resultados.';
-        }
-      },
-      (error) => {
-        console.error('Error al buscar libro en la API:', error);
-        this.mensajeError = 'Hubo un problema al buscar el libro. Intenta nuevamente.';
-      }
-    );
-  }
-  
-  
-
-  /**
-   * Agregar un libro a la base de datos local.
-   */
-  async agregarLibro(libro: any) {
-    try {
-      await this.dbService.agregarLibro(libro, this.usuarioId);
-      const alert = await this.alertController.create({
-        header: 'Éxito',
-        message: 'Libro agregado correctamente a tu biblioteca.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-    } catch (error) {
-      console.error('Error al agregar libro:', error);
-    }
-  }
-
-  /**
-   * Confirmar eliminación de un libro.
-   */
-  async confirmarEliminar(isbn: string) {
-    const alert = await this.alertController.create({
-      header: 'Confirmar Eliminación',
-      message: '¿Estás seguro de que deseas eliminar este libro?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
-        {
-          text: 'Eliminar',
-          handler: () => this.eliminarLibro(isbn),
-        },
-      ],
-    });
-    await alert.present();
-  }
-
-  /**
-   * Eliminar un libro de la base de datos local y de la lista.
-   */
-  async eliminarLibro(isbn: string) {
-    try {
-      await this.dbService.eliminarLibro(isbn);
-      this.misLecturas = this.misLecturas.filter((libro) => libro.isbn !== isbn);
-      const alert = await this.alertController.create({
-        header: 'Éxito',
-        message: 'Libro eliminado correctamente.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-    } catch (error) {
-      console.error('Error al eliminar libro:', error);
-    }
-  }
-
-  /**
-   * Editar un libro mediante un modal.
-   */
-  async editarLibro(libro: any) {
-    const modal = await this.modalController.create({
-      component: EditarLibroPage,
-      componentProps: { libro },
-    });
-
-    modal.onDidDismiss().then(async (result: { data?: any; role?: string }) => {
-      if (result.data?.eliminado) {
-        this.misLecturas = this.misLecturas.filter((l) => l.isbn !== libro.isbn);
-      } else if (result.data) {
-        const index = this.misLecturas.findIndex((l) => l.isbn === libro.isbn);
-        if (index > -1) {
-          this.misLecturas[index] = result.data;
-        }
-      }
-    });
-
-    await modal.present();
-  }
-} 
+}

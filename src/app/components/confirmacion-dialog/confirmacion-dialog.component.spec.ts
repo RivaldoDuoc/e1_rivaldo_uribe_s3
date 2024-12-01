@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { ConfirmacionDialogComponent } from './confirmacion-dialog.component';
 
@@ -9,8 +10,12 @@ describe('ConfirmacionDialogComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ConfirmacionDialogComponent ],
-      imports: [IonicModule.forRoot()]
+      declarations: [ConfirmacionDialogComponent],
+      imports: [IonicModule.forRoot()],
+      providers: [
+        { provide: MatDialogRef, useValue: {} }, 
+        { provide: MAT_DIALOG_DATA, useValue: {} }, 
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ConfirmacionDialogComponent);

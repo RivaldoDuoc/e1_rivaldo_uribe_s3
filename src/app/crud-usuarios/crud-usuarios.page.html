@@ -12,9 +12,12 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
+  <!-- Contenedor que muestra la lista de usuarios si no hay un usuario seleccionado -->
   <ng-container *ngIf="!selectedUser">
     <ion-list>
+      <!-- Iteración sobre la lista de usuarios para mostrar cada uno con opciones de edición y eliminación -->
       <ion-item *ngFor="let user of users">
         <ion-label>{{ user.nombre }} {{ user.apellidos }} ({{ user.tipoUsuario }})</ion-label>
         <ion-button color="primary" (click)="editUser(user)">Editar</ion-button>
@@ -23,8 +26,10 @@
     </ion-list>
   </ng-container>
 
+  <!-- Contenedor que muestra el formulario de edición si hay un usuario seleccionado -->
   <ng-container *ngIf="selectedUser">
     <form [formGroup]="editForm" (ngSubmit)="saveChanges()">
+      <!-- Campo de entrada para el nombre del usuario -->
       <ion-item>
         <ion-label position="floating">Nombre</ion-label>
         <ion-input formControlName="nombre"></ion-input>
@@ -33,6 +38,7 @@
         Nombre es requerido.
       </ion-text>
 
+      <!-- Campo de entrada para los apellidos del usuario -->
       <ion-item>
         <ion-label position="floating">Apellidos</ion-label>
         <ion-input formControlName="apellidos"></ion-input>
@@ -41,16 +47,19 @@
         Apellidos son requeridos.
       </ion-text>
 
+      <!-- Campo de entrada para el correo electrónico, deshabilitado -->
       <ion-item>
         <ion-label position="floating">Correo Electrónico</ion-label>
         <ion-input formControlName="email" [disabled]="true"></ion-input>
       </ion-item>
 
+      <!-- Campo de entrada para la nueva contraseña -->
       <ion-item>
         <ion-label position="floating">Nueva Contraseña</ion-label>
         <ion-input formControlName="password" type="password"></ion-input>
       </ion-item>
 
+      <!-- Campo de entrada para confirmar la nueva contraseña -->
       <ion-item>
         <ion-label position="floating">Confirmar Contraseña</ion-label>
         <ion-input formControlName="confirmPassword" type="password"></ion-input>
@@ -59,6 +68,7 @@
         Las contraseñas no coinciden.
       </ion-text>
 
+      <!-- Selector para elegir el rol del usuario -->
       <ion-item>
         <ion-label>Rol</ion-label>
         <ion-select formControlName="tipoUsuario">
@@ -67,6 +77,7 @@
         </ion-select>
       </ion-item>
 
+      <!-- Botones para guardar cambios o cancelar la edición -->
       <ion-button expand="block" type="submit" [disabled]="editForm!.invalid">Guardar Cambios</ion-button>
       <ion-button expand="block" color="medium" (click)="cancelEdit()">Cancelar</ion-button>
     </form>

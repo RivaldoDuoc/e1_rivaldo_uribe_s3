@@ -1,17 +1,20 @@
 <ion-header>
   <ion-toolbar>
+    <!-- Logo de la aplicación en el lado izquierdo del toolbar -->
     <ion-buttons slot="start">
       <img src="assets/img/logo.png" alt="Logo" class="logo" />
     </ion-buttons>
+    <!-- Botón de menú en el lado derecho del toolbar -->
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
+    <!-- Título de la página "Mis Lecturas" -->
     <ion-title>Mis Lecturas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Formulario para buscar libros -->
+  <!-- Formulario de búsqueda -->
   <form [formGroup]="buscarForm" (ngSubmit)="buscarLibro()">
     <ion-item>
       <ion-label position="floating">Buscar por ISBN o Título</ion-label>
@@ -25,19 +28,33 @@
     <p>{{ mensajeError }}</p>
   </ion-text>
 
+  <!-- Resultado de búsqueda -->
+  <ion-card *ngIf="resultadoBusqueda">
+    <ion-card-header>
+      <ion-card-title>{{ resultadoBusqueda.titulo }}</ion-card-title>
+      <ion-card-subtitle>{{ resultadoBusqueda.autor }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>ISBN:</strong> {{ resultadoBusqueda.isbn }}</p>
+      <img [src]="resultadoBusqueda.imagen" alt="Portada del libro" />
+      <ion-button expand="block" color="success" (click)="guardarLibroDesdeAPI(resultadoBusqueda)">
+        Guardar en Mis Lecturas
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
   <!-- Lista de libros -->
-  <h2 class="mejores-valorados">Mis Lecturas</h2>
+  <h2 *ngIf="misLecturas.length > 0" class="mejores-valorados">Mis Lecturas</h2>
   <div *ngFor="let libro of misLecturas" class="libro-container">
     <ion-card class="libro-card" (click)="editarLibro(libro)">
-      <!-- Imagen del libro -->
       <img [src]="libro.imagen || 'assets/img/default-book.jpg'" alt="Imagen del libro" class="libro-imagen" />
       <ion-card-content>
-        <h3 class="libro-titulo">{{ libro.titulo }}</h3>
-        <p class="libro-detalle">Autor: {{ libro.autor }}</p>
-        <p class="libro-detalle">ISBN: {{ libro.isbn }}</p>
-        <p class="libro-detalle">Reseña: {{ libro.resena || 'Sin reseña disponible' }}</p>
+        <h3>{{ libro.titulo }}</h3>
+        <p>Autor: {{ libro.autor }}</p>
+        <p>ISBN: {{ libro.isbn }}</p>
       </ion-card-content>
     </ion-card>
     <ion-button color="danger" (click)="confirmarEliminar(libro.isbn)">Eliminar</ion-button>
   </div>
+  <ion-text color="medium" *ngIf="misLecturas.length === 0">No existen libros agregados.</ion-text>
 </ion-content>

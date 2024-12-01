@@ -15,6 +15,7 @@ export class MiPerfilPage implements OnInit {
   perfilForm: FormGroup; // Formulario del perfil
   isFirstUser: boolean = false; // Verifica si es el primer usuario
   tipoUsuario: string = 'user'; // Tipo de usuario (por defecto 'user')
+  isRegistro: boolean = false; // Modo registro o edición
 
   constructor(
     private fb: FormBuilder,
@@ -29,7 +30,7 @@ export class MiPerfilPage implements OnInit {
       {
         nombre: ['', Validators.required],
         apellidos: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]], // Solo lectura
+        email: ['', [Validators.required, Validators.email]], // Habilitado en modo registro
         password: [
           '',
           [Validators.required, Validators.minLength(4), Validators.maxLength(6)],
@@ -43,13 +44,16 @@ export class MiPerfilPage implements OnInit {
 
   async ngOnInit(): Promise<void> {
     await this.storage.create(); // Asegura que el almacenamiento esté listo
+    await this.dbService.initializeDatabase(); // Asegura que la base de datos esté inicializada
 
     // Verificar si se accede desde el login (registro)
-    const isRegistro = this.route.snapshot.queryParamMap.get('registro') === 'true';
+    this.isRegistro = this.route.snapshot.queryParamMap.get('registro') === 'true';
 
-    if (isRegistro) {
-      // Si es registro, limpiar el formulario
+    if (this.isRegistro) {
+      // Si es registro, limpiar el formulario y habilitar el campo email
       this.perfilForm.reset();
+      this.perfilForm.get('email')?.enable();
+      console.log('Modo registro: campo email habilitado.');
     } else {
       // Si no es registro, cargar datos del usuario logueado
       const usuarioEmail = await this.storage.get('usuarioEmail');
@@ -59,23 +63,30 @@ export class MiPerfilPage implements OnInit {
           this.perfilForm.patchValue({
             nombre: usuarioActivo.nombre,
             apellidos: usuarioActivo.apellidos,
-            email: usuarioActivo.email, // Solo lectura
+            email: usuarioActivo.email,
             fechaNacimiento: usuarioActivo.fechaNacimiento,
-            password: '', // Contraseña en blanco
-            confirmPassword: '', // Validación de contraseña
+            password: '',
+            confirmPassword: '',
           });
           this.tipoUsuario = usuarioActivo.tipoUsuario;
+          this.perfilForm.get('email')?.disable(); // Deshabilitar el email para edición
+          console.log('Modo edición: campo email deshabilitado.');
         }
       }
     }
 
-    // Verificar si es el primer usuario registrado
-    const users = await this.dbService.getAllUsers();
-    this.isFirstUser = users.length === 0;
+    try {
+      // Verificar si es el primer usuario registrado
+      const users = await this.dbService.getAllUsers();
+      this.isFirstUser = users.length === 0;
 
-    // Si es el primer usuario, permitir el rol "admin"
-    if (this.isFirstUser) {
-      this.tipoUsuario = 'admin';
+      // Si es el primer usuario, permitir el rol "admin"
+      if (this.isFirstUser) {
+        this.tipoUsuario = 'admin';
+      }
+    } catch (error) {
+      console.error('Error al obtener la lista de usuarios:', error);
+      this.isFirstUser = false; // Considerar como no el primer usuario en caso de error
     }
   }
 
@@ -88,55 +99,109 @@ export class MiPerfilPage implements OnInit {
 
   // Guardar cambios en el perfil del usuario
   async guardarPerfil(): Promise<void> {
+    console.log('Iniciando guardarPerfil...');
+    console.log('Estado del formulario:', this.perfilForm.valid);
+    console.log('Valores del formulario:', this.perfilForm.value);
+
     if (this.perfilForm.valid) {
-      // Mostrar un diálogo de confirmación
-      const dialogRef = this.dialog.open(ConfirmacionDialogComponent, {
-        data: {
-          titulo: 'Guardar Cambios',
-          mensaje: '¿Está seguro que desea guardar los cambios?',
-        },
-      });
+      try {
+        const dialogRef = this.dialog.open(ConfirmacionDialogComponent, {
+          data: {
+            titulo: 'Guardar Cambios',
+            mensaje: '¿Está seguro que desea guardar los cambios?',
+          },
+        });
 
-      dialogRef.afterClosed().subscribe(async (result) => {
-        if (result) {
-          // Extraer datos del formulario
-          const { nombre, apellidos, password, fechaNacimiento } = this.perfilForm.value;
-          const usuarioEmail = await this.storage.get('usuarioEmail');
+        dialogRef.afterClosed().subscribe(async (result) => {
+          if (result) {
+            const { nombre, apellidos, email, password, fechaNacimiento } = this.perfilForm.value;
+            console.log('Datos del formulario a guardar:', { nombre, apellidos, email, password, fechaNacimiento });
 
-          try {
-            // Actualizar los datos del usuario en la base de datos
-            const usuarioActivo = await this.dbService.getUserByEmail(usuarioEmail);
-            if (usuarioActivo) {
-              await this.dbService.updateUser(
-                usuarioActivo.id,
-                nombre,
-                apellidos,
-                fechaNacimiento,
-                usuarioEmail, // Mantener el email actual
-                password,
-                usuarioActivo.tipoUsuario
-              );
-              const alert = await this.dialog.open(ConfirmacionDialogComponent, {
-                data: {
-                  titulo: 'Éxito',
-                  mensaje: 'Los cambios fueron guardados correctamente.',
-                },
-              });
-              await alert.afterClosed().toPromise();
+            // Verificar si ya existe un usuario en la sesión
+            const usuarioEmail = await this.storage.get('usuarioEmail');
+            console.log('Usuario logueado actualmente:', usuarioEmail);
+
+            if (this.isRegistro) {
+              // Registrar un nuevo usuario
+              try {
+                const tipoUsuario = this.isFirstUser ? 'admin' : 'user';
+                await this.dbService.addUser(
+                  nombre,
+                  apellidos,
+                  fechaNacimiento,
+                  email,
+                  password,
+                  tipoUsuario
+                );
+                console.log('Nuevo usuario registrado correctamente en SQLite.');
+
+                // Guardar el email en localStorage
+                await this.storage.set('usuarioEmail', email);
+
+                // Mostrar mensaje de éxito
+                this.dialog.open(ConfirmacionDialogComponent, {
+                  data: {
+                    titulo: 'Éxito',
+                    mensaje: 'Usuario registrado correctamente.',
+                  },
+                });
+              } catch (error) {
+                console.error('Error al registrar el usuario:', error);
+                this.dialog.open(ConfirmacionDialogComponent, {
+                  data: {
+                    titulo: 'Error',
+                    mensaje: 'No se pudo registrar el usuario. Verifique los datos ingresados.',
+                  },
+                });
+              }
+            } else {
+              // Actualizar un usuario existente
+              try {
+                const usuarioActivo = await this.dbService.getUserByEmail(usuarioEmail);
+                console.log('Usuario activo encontrado en SQLite:', usuarioActivo);
+
+                if (usuarioActivo) {
+                  await this.dbService.updateUser(
+                    usuarioActivo.id,
+                    nombre,
+                    apellidos,
+                    fechaNacimiento,
+                    usuarioEmail,
+                    password,
+                    usuarioActivo.tipoUsuario
+                  );
+                  console.log('Usuario actualizado correctamente en SQLite.');
+
+                  this.dialog.open(ConfirmacionDialogComponent, {
+                    data: {
+                      titulo: 'Éxito',
+                      mensaje: 'Los cambios fueron guardados correctamente.',
+                    },
+                  });
+                }
+              } catch (error) {
+                console.error('Error al actualizar el usuario:', error);
+                this.dialog.open(ConfirmacionDialogComponent, {
+                  data: {
+                    titulo: 'Error',
+                    mensaje: 'No se pudo actualizar el usuario. Intente nuevamente.',
+                  },
+                });
+              }
             }
-          } catch (error) {
-            console.error('Error al actualizar el usuario:', error);
-            this.dialog.open(ConfirmacionDialogComponent, {
-              data: {
-                titulo: 'Error',
-                mensaje: 'Hubo un problema al guardar los cambios.',
-              },
-            });
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.error('Error general al guardar los datos:', error);
+        this.dialog.open(ConfirmacionDialogComponent, {
+          data: {
+            titulo: 'Error',
+            mensaje: 'Hubo un problema al guardar los datos. Intente nuevamente.',
+          },
+        });
+      }
     } else {
-      // Mostrar un mensaje si el formulario no es válido
+      console.log('Formulario inválido:', this.perfilForm.errors);
       this.dialog.open(ConfirmacionDialogComponent, {
         data: {
           titulo: 'Error',

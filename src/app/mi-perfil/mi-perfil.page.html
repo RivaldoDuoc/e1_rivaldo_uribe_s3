@@ -60,7 +60,7 @@
         <!-- Campo de email con validación de formato -->
         <ion-item class="rounded-item">
           <ion-label position="floating">E-mail</ion-label>
-          <ion-input formControlName="email" type="email" [readonly]="true"></ion-input>
+          <ion-input formControlName="email" type="email"></ion-input>
         </ion-item>
         <ion-text color="danger" *ngIf="perfilForm.get('email')?.hasError('email') && perfilForm.get('email')?.touched">
           E-mail inválido
@@ -92,7 +92,17 @@
       <ion-checkbox [(ngModel)]="isFirstUser" [checked]="tipoUsuario === 'admin'" disabled></ion-checkbox>
     </ion-item>
 
+    <!-- Mensajes de depuración (opcional, para pruebas) -->
+    <p *ngIf="perfilForm.invalid" style="color: red; text-align: center;">
+      El formulario contiene errores, por favor corríjalos.
+    </p>
+    <p *ngIf="perfilForm.valid" style="color: green; text-align: center;">
+      El formulario es válido, puede guardarlo.
+    </p>
+
     <!-- Botón para guardar el formulario, deshabilitado si es inválido -->
-    <ion-button class="small-button" expand="block" type="submit" [disabled]="perfilForm.invalid">Guardar</ion-button>
+    <ion-button class="small-button" expand="block" type="submit" [disabled]="perfilForm.invalid">
+      Guardar
+    </ion-button>
   </form>
-</ion-content> 
+</ion-content>

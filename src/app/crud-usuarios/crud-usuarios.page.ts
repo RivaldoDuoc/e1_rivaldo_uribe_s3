@@ -16,14 +16,17 @@ export class CrudUsuariosPage implements OnInit {
 
   constructor(private dbService: DbService, private fb: FormBuilder, private dialog: MatDialog) {}
 
+  // Se ejecuta al inicializar el componente y carga los usuarios.
   async ngOnInit() {
     await this.loadUsers();
   }
 
+  // Carga todos los usuarios desde la base de datos.
   async loadUsers() {
     this.users = await this.dbService.getAllUsers();
   }
 
+  // Configura el formulario de edición para el usuario seleccionado.
   editUser(user: any) {
     this.selectedUser = user;
     this.editForm = this.fb.group({
@@ -36,6 +39,7 @@ export class CrudUsuariosPage implements OnInit {
     });
   }
 
+  // Guarda los cambios realizados en el formulario de edición.
   async saveChanges() {
     if (this.editForm.valid) {
       const updatedUser = {
@@ -79,11 +83,13 @@ export class CrudUsuariosPage implements OnInit {
     }
   }
 
+  // Cancela la edición y resetea el formulario.
   cancelEdit() {
     this.selectedUser = null;
     this.editForm = this.fb.group({});
   }
 
+  // Elimina un usuario, mostrando un diálogo de confirmación.
   async deleteUser(userId: number) {
     const userToDelete = this.users.find(user => user.id === userId);
 

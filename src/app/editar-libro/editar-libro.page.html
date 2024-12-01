@@ -1,32 +1,32 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Editar Libro</ion-title>
+    <ion-title>Editar Libro</ion-title> <!-- Título de la página -->
     <ion-buttons slot="end">
-      <ion-button (click)="cancelar()">Cancelar</ion-button>
+      <ion-button (click)="cancelar()">Cancelar</ion-button> <!-- Botón para cancelar y salir -->
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form [formGroup]="libroForm">
+  <form [formGroup]="libroForm"> <!-- Formulario reactivo para gestionar datos del libro -->
     <ion-item>
       <ion-label position="floating">Título</ion-label>
-      <ion-input formControlName="titulo"></ion-input>
+      <ion-input formControlName="titulo"></ion-input> <!-- Campo para el título -->
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Autor</ion-label>
-      <ion-input formControlName="autor"></ion-input>
+      <ion-input formControlName="autor"></ion-input> <!-- Campo para el autor -->
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">ISBN</ion-label>
-      <ion-input formControlName="isbn" readonly></ion-input>
+      <ion-input formControlName="isbn" readonly></ion-input> <!-- Campo para el ISBN, solo lectura -->
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Reseña</ion-label>
-      <ion-textarea formControlName="resena"></ion-textarea>
+      <ion-textarea formControlName="resena"></ion-textarea> <!-- Campo para la reseña -->
     </ion-item>
 
     <ion-item>
@@ -34,25 +34,25 @@
       <ion-range min="0" max="5" step="0.5" formControlName="valoracion" snaps="true">
         <ion-icon slot="start" name="star-outline"></ion-icon>
         <ion-icon slot="end" name="star"></ion-icon>
-      </ion-range>
+      </ion-range> <!-- Control deslizante para la valoración -->
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">Comentarios</ion-label>
-      <ion-textarea formControlName="comentarios"></ion-textarea>
+      <ion-textarea formControlName="comentarios"></ion-textarea> <!-- Campo para comentarios -->
     </ion-item>
 
     <ion-item>
       <ion-label position="stacked">Imagen</ion-label>
-      <input type="file" (change)="subirImagen($event)" />
-      <ion-button expand="block" color="secondary" (click)="tomarFotografia()">Tomar Foto</ion-button>
+      <input type="file" (change)="subirImagen($event)" /> <!-- Selector de archivo para subir imágenes -->
+      <ion-button expand="block" color="secondary" (click)="tomarFotografia()">Tomar Foto</ion-button> <!-- Botón para tomar una foto -->
     </ion-item>
 
     <ion-item>
-      <img [src]="libroForm.get('imagen')?.value || 'assets/img/default-book.jpg'" style="width: 100%; max-height: 200px;" />
+      <img [src]="libroForm.get('imagen')?.value || 'assets/img/default-book.jpg'" style="width: 100%; max-height: 200px;" /> <!-- Vista previa de la imagen -->
     </ion-item>
 
-    <ion-button expand="block" color="primary" (click)="guardarCambios()">Guardar</ion-button>
-    <ion-button expand="block" color="danger" (click)="confirmarEliminar()">Eliminar</ion-button>
+    <ion-button expand="block" color="primary" (click)="guardarCambios()">Guardar</ion-button> <!-- Botón para guardar cambios -->
+    <ion-button expand="block" color="danger" (click)="confirmarEliminar()">Eliminar</ion-button> <!-- Botón para eliminar el libro -->
   </form>
 </ion-content>

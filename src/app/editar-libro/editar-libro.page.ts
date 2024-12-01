@@ -11,14 +11,7 @@ import { DbService } from '../services/db.service'; // Importa el servicio DbSer
 })
 export class EditarLibroPage {
   @Input() libro: any; // Recibe el libro a editar
-  libroForm: FormGroup;
-
-  edicionHabilitada: { [key: string]: boolean } = {
-    titulo: false,
-    autor: false,
-    resena: false,
-    comentarios: false,
-  };
+  libroForm: FormGroup; // Formulario reactivo para editar libro
 
   constructor(
     private modalController: ModalController,
@@ -26,6 +19,7 @@ export class EditarLibroPage {
     private alertController: AlertController,
     private dbService: DbService
   ) {
+    // Inicializa el formulario del libro con validadores
     this.libroForm = this.fb.group({
       titulo: ['', Validators.required],
       autor: ['', Validators.required],
@@ -37,15 +31,12 @@ export class EditarLibroPage {
     });
   }
 
+  // Carga los datos del libro recibido en el formulario
   ngOnInit() {
-    // Rellena el formulario con los datos del libro recibido
     this.libroForm.patchValue(this.libro);
   }
 
-  habilitarEdicion(campo: string) {
-    this.edicionHabilitada[campo] = true; // Habilita edición para el campo seleccionado
-  }
-
+  // Abre un cuadro de confirmación antes de guardar los cambios
   async confirmarGuardar() {
     const alert = await this.alertController.create({
       header: 'Confirmar Guardar',
@@ -64,15 +55,38 @@ export class EditarLibroPage {
     await alert.present();
   }
 
-  guardarCambios() {
-    const libroEditado = this.libroForm.value; // Obtén los valores del formulario
-    this.modalController.dismiss(libroEditado); // Devuelve el libro editado al cerrar el modal
+  // Guarda los cambios en la base de datos y cierra el modal
+  async guardarCambios() {
+    const libroActualizado = this.libroForm.value; // Obtiene los valores del formulario
+    try {
+      // Actualiza el libro en la base de datos
+      await this.dbService.actualizarLibro(libroActualizado);
+      const alert = await this.alertController.create({
+        header: 'Éxito',
+        message: 'Libro actualizado correctamente.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+
+      // Cierra el modal y envía los datos actualizados
+      this.modalController.dismiss(libroActualizado);
+    } catch (error) {
+      console.error('Error al guardar cambios:', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'No se pudieron guardar los cambios. Intente nuevamente.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
   }
 
+  // Cierra el modal sin realizar ningún cambio
   cancelar() {
-    this.modalController.dismiss(); // Cierra el modal sin cambios
+    this.modalController.dismiss();
   }
 
+  // Abre un cuadro de confirmación antes de eliminar el libro
   async confirmarEliminar() {
     const alert = await this.alertController.create({
       header: 'Confirmar Eliminación',
@@ -93,6 +107,7 @@ export class EditarLibroPage {
     await alert.present();
   }
 
+  // Elimina el libro de la base de datos y cierra el modal
   async eliminarLibro() {
     try {
       const isbn = this.libroForm.get('isbn')?.value;
@@ -119,6 +134,7 @@ export class EditarLibroPage {
     }
   }
 
+  // Sube una imagen desde el dispositivo del usuario y la muestra en el formulario
   subirImagen(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -130,14 +146,15 @@ export class EditarLibroPage {
     }
   }
 
+  // Toma una foto con la cámara y la agrega al formulario
   async tomarFotografia() {
     try {
       const photo = await Camera.getPhoto({
         quality: 90,
         resultType: CameraResultType.Base64,
         source: CameraSource.Camera,
-        direction: CameraDirection.Rear, // Asegura que se use la cámara trasera
-        correctOrientation: true, // Ajusta automáticamente la orientación de la fotografía
+        direction: CameraDirection.Rear,
+        correctOrientation: true,
       });
 
       if (photo && photo.base64String) {
