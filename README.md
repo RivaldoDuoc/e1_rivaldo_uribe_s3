@@ -1,10 +1,10 @@
-ComentaLibros
+# ComentaLibros
 
 ¡Bienvenido a **ComentaLibros**! Una aplicación diseñada para fomentar la lectura y facilitar el intercambio de opiniones sobre libros en una comunidad digital.
 
+---
 
-
-📖 **Descripción del Proyecto**
+## 📖 **Descripción del Proyecto**
 
 **ComentaLibros** es una aplicación creada con **Ionic** y **Angular**, cuyo objetivo es brindar a los usuarios una plataforma para:
 - Explorar libros destacados por categorías.
@@ -15,7 +15,7 @@ Este proyecto fue desarrollado como parte de una actividad formativa, integrando
 
 ---
 
-🛠️ **Tecnologías Utilizadas**
+## 🛠️ **Tecnologías Utilizadas**
 
 - **Framework:** Ionic y Angular.
 - **Base de Datos:** SQLite.
@@ -25,7 +25,7 @@ Este proyecto fue desarrollado como parte de una actividad formativa, integrando
 
 ---
 
-🚀 **Instalación y Configuración**
+## 🚀 **Instalación y Configuración**
 
 Sigue estos pasos para ejecutar el proyecto en tu entorno local:
 
@@ -36,19 +36,16 @@ Sigue estos pasos para ejecutar el proyecto en tu entorno local:
 Instalar dependencias: Asegúrate de tener Node.js y npm instalados. Luego, ejecuta:
 
 bash
-Copiar código
 npm install
 Configurar SQLite:
 
 Asegúrate de que el plugin SQLite esté instalado correctamente.
 Ejecuta:
 bash
-Copiar código
 ionic cap sync
 Iniciar la aplicación: Para probar la app en un navegador:
 
 bash
-Copiar código
 ionic serve
 Probar en Android:
 
@@ -62,29 +59,18 @@ Pruebas unitarias (Jasmine)
 Ejecuta las pruebas unitarias con el comando:
 
 bash
-Copiar código
 ng test
 Pruebas de extremo a extremo (Cypress)
 Ejecuta las pruebas E2E con:
 
 bash
-Copiar código
 npx cypress open
 🌟 Características Destacadas
 Sistema de calificación y comentarios.
 Gestión local de datos con SQLite.
 Animaciones personalizadas y diseño intuitivo.
 Implementación de pruebas unitarias y E2E.
-📂 Estructura del Proyecto
-bash
-Copiar código
-├── src/
-│   ├── app/                 # Componentes principales
-│   ├── assets/              # Recursos (imágenes, íconos)
-│   ├── environments/        # Configuraciones de entorno
-│   ├── services/            # Servicios compartidos
-│   └── theme/               # Estilos globales
-└── README.md                # Documentación
+
 📱 Publicación
 La aplicación fue firmada y empaquetada en Android Studio, y está lista para su publicación en Google Play.
 
@@ -94,12 +80,6 @@ Este proyecto fue desarrollado con fines educativos y no tiene fines comerciales
 👥 Autores
 Rivaldo Uribe
 Estudiante de Duoc UC, apasionado por la programación y el desarrollo de aplicaciones móviles.
-
-
-
-
-
-
 
 
 
