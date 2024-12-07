@@ -1,62 +1,68 @@
-describe('Pruebas básicas de la página de Login', () => {
-  const baseUrl = 'http://localhost:8100'; // URL base de la aplicación
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { IonicModule } from '@ionic/angular';
+import { LoginPage } from './login.page';
+import { FormsModule } from '@angular/forms';
+import { Storage } from '@ionic/storage-angular';
 
-  beforeEach(() => {
-    cy.visit(`${baseUrl}/login`); // Navega a la página de login
+describe('LoginPage', () => {
+  let component: LoginPage;
+  let fixture: ComponentFixture<LoginPage>;
+  let mockStorage: jasmine.SpyObj<Storage>;
 
-    // Mock para simular almacenamiento en SQLite
-    cy.window().then((win) => {
-      cy.stub(win.localStorage, 'getItem')
-        .withArgs('currentUser')
-        .returns(null); // Simula que no hay un usuario logueado inicialmente
-    });
+  beforeEach(async () => {
+    // Crear un mock para Storage
+    mockStorage = jasmine.createSpyObj('Storage', ['create', 'get', 'set', 'remove']);
+    mockStorage.create.and.returnValue(Promise.resolve(mockStorage)); // Devuelve una instancia mock de Storage
+    mockStorage.get.and.returnValue(Promise.resolve(null));
+
+    await TestBed.configureTestingModule({
+      declarations: [LoginPage],
+      imports: [
+        IonicModule.forRoot(),
+        FormsModule, // Para soporte de ngModel
+      ],
+      providers: [
+        { provide: Storage, useValue: mockStorage },
+      ],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LoginPage);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('Debería mostrar correctamente los campos y el botón de login', () => {
-    // Verifica que los elementos principales existan
-    cy.get('ion-input[formcontrolname="email"]').should('exist'); // Campo de correo electrónico
-    cy.get('ion-input[formcontrolname="password"]').should('exist'); // Campo de contraseña
-    cy.get('ion-button[type="submit"]').contains('ENTRAR').should('exist'); // Botón de envío
+  it('debería crear el componente', () => {
+    expect(component).toBeTruthy();
   });
 
-  it('Debería permitir iniciar sesión con credenciales válidas (Mock)', () => {
-    // Mock para simular respuesta de inicio de sesión exitosa
-    cy.intercept('POST', '/api/login', {
-      statusCode: 200,
-      body: { tipoUsuario: 'admin', email: 'riv.uribe@duocuc.cl' },
-    }).as('mockLogin');
-
-    // Simula el ingreso de credenciales válidas
-    cy.get('ion-input[formcontrolname="email"]').type('riv.uribe@duocuc.cl');
-    cy.get('ion-input[formcontrolname="password"]').type('111111');
-    cy.get('ion-button[type="submit"]').click();
-
-    // Espera la respuesta simulada del login
-    cy.wait('@mockLogin');
-
-    // Verifica que redirige correctamente al home
-    cy.url().should('include', '/home');
+  it('debería inicializar "email" y "password" como cadenas vacías', () => {
+    expect(component.email).toBe('');
+    expect(component.password).toBe('');
   });
 
-  it('Debería mostrar mensaje de error con credenciales inválidas', () => {
-    // Mock para simular respuesta de error por credenciales inválidas
-    cy.intercept('POST', '/api/login', {
-      statusCode: 401,
-      body: { message: 'Credenciales incorrectas' },
-    }).as('mockInvalidLogin');
+  it('debería mostrar un botón de login deshabilitado cuando loading es true', () => {
+    component.loading = true;
+    fixture.detectChanges();
 
-    // Simula el ingreso de credenciales inválidas
-    cy.get('ion-input[formcontrolname="email"]').type('usuario@invalido.com');
-    cy.get('ion-input[formcontrolname="password"]').type('123456');
-    cy.get('ion-button[type="submit"]').click();
+    const button = fixture.nativeElement.querySelector('ion-button');
+    expect(button.disabled).toBeTrue();
+  });
 
-    // Espera la respuesta simulada
-    cy.wait('@mockInvalidLogin');
+  it('debería llamar a la función login al hacer clic en el botón', () => {
+    spyOn(component, 'login');
 
-    // Verifica que muestra el mensaje de error
-    cy.get('ion-text.color-danger')
-      .should('exist')
-      .and('contain', 'Credenciales incorrectas');
+    // Simula clic en el botón
+    const button = fixture.nativeElement.querySelector('ion-button');
+    button.click();
+
+    expect(component.login).toHaveBeenCalled();
+  });
+
+  it('debería mostrar el spinner cuando loading es true', () => {
+    component.loading = true;
+    fixture.detectChanges();
+
+    const spinner = fixture.nativeElement.querySelector('ion-spinner');
+    expect(spinner).toBeTruthy();
   });
 });
-
