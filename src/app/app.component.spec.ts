@@ -8,7 +8,7 @@ import { Storage } from '@ionic/storage-angular';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
-  let component: AppComponent;
+  let componente: AppComponent;
   let mockStorage: any;
   let mockMenuController: any;
   let mockRouter: any;
@@ -44,35 +44,35 @@ describe('AppComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
-    component = fixture.componentInstance;
+    componente = fixture.componentInstance;
   }));
 
-  it('should create the app', () => {
-    expect(component).toBeTruthy();
+  it('debería crear la aplicación', () => {
+    expect(componente).toBeTruthy();
   });
 
-  it('should initialize storage on ngOnInit', async () => {
-    await component.ngOnInit();
+  it('debería inicializar el almacenamiento en ngOnInit', async () => {
+    await componente.ngOnInit();
     expect(mockStorage.create).toHaveBeenCalled(); // Verifica que se inicialice el almacenamiento
     expect(mockDbService.createDatabase).toHaveBeenCalled(); // Verifica que se crea la base de datos
   });
 
-  it('should log out and navigate to login', async () => {
-    await component.logout();
+  it('debería cerrar sesión y redirigir al login', async () => {
+    await componente.logout();
     expect(mockMenuController.close).toHaveBeenCalled(); // Verifica que se cierre el menú
     expect(mockStorage.remove).toHaveBeenCalledWith('currentUser'); // Verifica que se elimine el usuario
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']); // Verifica que redirige al login
   });
 
-  it('should navigate to CRUD if user is admin', () => {
-    component.isAdmin = true;
-    component.navegarCRUD();
+  it('debería navegar al CRUD si el usuario es administrador', () => {
+    componente.isAdmin = true;
+    componente.navegarCRUD();
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/crud-usuarios']); // Verifica que navega al CRUD
   });
 
-  it('should not navigate to CRUD if user is not admin', () => {
-    component.isAdmin = false;
-    component.navegarCRUD();
+  it('no debería navegar al CRUD si el usuario no es administrador', () => {
+    componente.isAdmin = false;
+    componente.navegarCRUD();
     expect(mockRouter.navigate).not.toHaveBeenCalled(); // Verifica que no navega
   });
 });

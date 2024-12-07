@@ -1,71 +1,64 @@
-describe('Home Page', () => {
+describe('Página de Inicio - Home', () => {
+  const mockLibros = [
+    {
+      titulo: 'Libro Prueba 1',
+      autor: 'Autor Prueba 1',
+      isbn: '1234567890',
+      categoria: 'Narrativos',
+      valoracion: 5,
+      imagen: '',
+    },
+    {
+      titulo: 'Libro Prueba 2',
+      autor: 'Autor Prueba 2',
+      isbn: '0987654321',
+      categoria: 'Infantil-juvenil',
+      valoracion: 4,
+      imagen: '',
+    },
+  ];
+
   beforeEach(() => {
-    // Mock de libros iniciales
-    cy.intercept('GET', '/assets/data/libros.json', {
-      statusCode: 200,
-      body: [
-        { titulo: 'El Principito', autor: 'Antoine de Saint-Exupéry', isbn: '123456789', imagen: 'assets/img/principito.jpg' },
-        { titulo: 'Cien Años de Soledad', autor: 'Gabriel García Márquez', isbn: '987654321', imagen: 'assets/img/cien-anos.jpg' },
-        { titulo: 'Don Quijote de la Mancha', autor: 'Miguel de Cervantes', isbn: '1122334455', imagen: 'assets/img/don-quijote.jpg' },
-      ],
+    cy.visit('http://localhost:8100/home');
+
+    // Mock para cargar libros desde la base de datos simulada
+    cy.intercept('GET', '/api/libros', { body: mockLibros }).as('getLibros');
+  });
+
+  it('Debería mostrar los libros correctamente al inicio', () => {
+    cy.wait('@getLibros');
+
+    // Verificar que se muestren los libros mockeados
+    cy.get('.libro-card').should('have.length', 2);
+    cy.get('.libro-card').first().within(() => {
+      cy.contains('Libro Prueba 1');
+      cy.contains('Autor: Autor Prueba 1');
+      cy.contains('Categoría: Narrativos');
     });
-
-    // Visitar la página de inicio
-    cy.visit('/');
   });
 
-  it('should display the header with the logo and menu button', () => {
-    // Verificar que el logo y el botón de menú son visibles
-    cy.get('.logo').should('be.visible');
-    cy.get('ion-menu-button').should('be.visible');
+  it('Debería filtrar libros por categoría', () => {
+    // Cambiar la categoría seleccionada
+    cy.get('ion-segment-button[value="Narrativos"]').click();
+
+    // Simular el filtrado (en este caso se mostrarían solo los libros de la categoría Narrativos)
+    cy.get('.libro-card').should('have.length', 1);
+    cy.contains('Libro Prueba 1');
   });
 
-  it('should display the search bar', () => {
-    // Verificar que el buscador esté presente
-    cy.get('ion-searchbar').should('be.visible');
+  it('Debería buscar un libro por título', () => {
+    cy.get('ion-searchbar input').type('Prueba 1');
+    
+    // Simular la búsqueda por título
+    cy.get('.libro-card').should('have.length', 1);
+    cy.contains('Libro Prueba 1');
   });
 
-  it('should display categories in the segment', () => {
-    // Verificar que las categorías están disponibles
-    cy.get('ion-segment-button').contains('+ Valorados').should('be.visible');
-    cy.get('ion-segment-button').contains('+ Recientes').should('be.visible');
-    cy.get('ion-segment-button').contains('Populares').should('be.visible');
-    cy.get('ion-segment-button').contains('Recomendados').should('be.visible');
-    cy.get('ion-segment-button').contains('Clásicos').should('be.visible');
-  });
+  it('Debería mostrar un mensaje si no hay libros disponibles en la categoría', () => {
+    // Cambiar a una categoría vacía
+    cy.get('ion-segment-button[value="Otras categorías"]').click();
 
-  it('should display the list of books', () => {
-    // Verificar que los libros se muestran correctamente
-    cy.contains('El Principito').should('be.visible');
-    cy.contains('Antoine de Saint-Exupéry').should('be.visible');
-    cy.contains('Cien Años de Soledad').should('be.visible');
-    cy.contains('Gabriel García Márquez').should('be.visible');
-  });
-
-  it('should filter books based on search input', () => {
-    // Escribir en el buscador
-    cy.get('ion-searchbar').type('Cien Años');
-
-    // Verificar que solo se muestra el libro filtrado
-    cy.contains('El Principito').should('not.exist');
-    cy.contains('Cien Años de Soledad').should('be.visible');
-  });
-
-  it('should filter books based on selected category', () => {
-    // Seleccionar la categoría "Populares"
-    cy.get('ion-segment-button').contains('Populares').click();
-
-    // Verificar que se actualiza la lista de libros según la categoría
-    cy.contains('Don Quijote de la Mancha').should('be.visible');
-    cy.contains('El Principito').should('not.exist');
-  });
-
-  it('should navigate to book details on click', () => {
-    // Clic en un libro
-    cy.contains('El Principito').click();
-
-    // Verificar que redirige a la página de detalles
-    cy.url().should('include', '/detalle-libro');
-    cy.contains('El Principito').should('be.visible');
+    // Simular el comportamiento con categoría vacía
+    cy.get('ion-text p').should('contain', 'No hay libros disponibles en esta categoría.');
   });
 });

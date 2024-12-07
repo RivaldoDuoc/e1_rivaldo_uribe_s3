@@ -16,11 +16,11 @@ describe('MiPerfilPage', () => {
   let mockMatDialog: any;
 
   beforeEach(waitForAsync(() => {
-    // Mock de Storage
+    // Mock para el servicio Storage
     mockStorage = jasmine.createSpyObj('Storage', ['create', 'get', 'set', 'remove']);
     mockStorage.get.and.returnValue(Promise.resolve('test@user.com'));
 
-    // Mock de DbService
+    // Mock para el servicio DbService
     mockDbService = jasmine.createSpyObj('DbService', [
       'initializeDatabase',
       'getUserByEmail',
@@ -38,7 +38,7 @@ describe('MiPerfilPage', () => {
     );
     mockDbService.getAllUsers.and.returnValue(Promise.resolve([]));
 
-    // Mock de MatDialog
+    // Mock para el componente MatDialog
     mockMatDialog = jasmine.createSpyObj('MatDialog', ['open']);
     mockMatDialog.open.and.returnValue({ afterClosed: () => of(true) });
 
@@ -59,15 +59,42 @@ describe('MiPerfilPage', () => {
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load user data on initialization', async () => {
+  it('debería cargar los datos del usuario al inicializar', async () => {
     await component.ngOnInit();
 
     expect(mockStorage.get).toHaveBeenCalledWith('usuarioEmail');
     expect(mockDbService.getUserByEmail).toHaveBeenCalledWith('test@user.com');
     expect(component.perfilForm.value.nombre).toBe('Test');
+    expect(component.perfilForm.value.apellidos).toBe('User');
+  });
+
+
+  it('debería guardar los datos correctamente', async () => {
+    component.perfilForm.patchValue({
+      nombre: 'Nombre Test',
+      apellidos: 'Apellidos Test',
+      fechaNacimiento: '2000-01-01',
+      email: 'test@user.com',
+      password: '1234',
+      confirmPassword: '1234',
+    });
+
+    await component.guardarPerfil();
+
+    expect(mockDbService.getUserByEmail).toHaveBeenCalled();
+    expect(component.perfilForm.valid).toBeTrue();
+  });
+
+  it('debería mostrar un mensaje de error si las contraseñas no coinciden', () => {
+    component.perfilForm.patchValue({
+      password: '1234',
+      confirmPassword: '5678',
+    });
+
+    expect(component.perfilForm.hasError('passwordMismatch')).toBeTrue();
   });
 });

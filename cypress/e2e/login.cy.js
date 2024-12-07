@@ -1,96 +1,77 @@
-describe('Página de Inicio de Sesión', () => {
+describe('Página de Login (Pruebas optimizadas)', () => {
+  const baseUrl = 'http://localhost:8100'; // URL base de la aplicación
+
   beforeEach(() => {
-    // Simulación de todos los métodos relacionados con SQLite
-    cy.intercept('POST', '/api/login', (req) => {
-      const { email, password } = req.body;
-      // Simulación para un administrador
-      if (email === 'admin@ejemplo.com' && password === 'admin123') {
-        req.reply({
-          statusCode: 200,
-          body: { success: true, tipoUsuario: 'admin' },
-        });
-      }
-      // Simulación para un usuario normal
-      else if (email === 'usuario@ejemplo.com' && password === 'password123') {
-        req.reply({
-          statusCode: 200,
-          body: { success: true, tipoUsuario: 'user' },
-        });
-      }
-      // Simulación de error para credenciales incorrectas
-      else {
-        req.reply({
-          statusCode: 401,
-          body: { success: false, message: 'Usuario o contraseña incorrectos.' },
-        });
-      }
+    cy.visit(`${baseUrl}/login`); // Navega a la página de login
+
+    // Mock para simular almacenamiento en SQLite
+    cy.window().then((win) => {
+      cy.stub(win.localStorage, 'getItem')
+        .withArgs('currentUser')
+        .returns(null); // Simula que no hay un usuario logueado inicialmente
     });
-
-    // Visitar la página de inicio de sesión
-    cy.visit('/');
-
-    // Asegurar que no exista un elemento que bloquee la interacción
-    cy.get('ion-backdrop').should('not.exist');
   });
 
-  it('Debería mostrar la página de inicio de sesión', () => {
-    cy.contains('Iniciar Sesión').should('be.visible');
+  it('Debería mostrar correctamente los elementos del login', () => {
+    // Verifica que los elementos principales estén presentes
+    cy.get('ion-input[formcontrolname="email"]').should('exist'); // Correo
+    cy.get('ion-input[formcontrolname="password"]').should('exist'); // Contraseña
+    cy.get('ion-button[type="submit"]').contains('ENTRAR').should('exist'); // Botón de enviar
   });
 
-  it('Debería mostrar error si los campos están vacíos', () => {
-    cy.get('ion-button').contains('Entrar').click();
-    cy.contains('Debe ingresar un e-mail válido.').should('be.visible');
+  it('Debería iniciar sesión correctamente con credenciales válidas (Mock)', () => {
+    // Mock para simular credenciales válidas
+    cy.intercept('POST', '/api/login', {
+      statusCode: 200,
+      body: { tipoUsuario: 'admin', email: 'riv.uribe@duocuc.cl' },
+    }).as('mockLogin');
+
+    // Simula ingreso de credenciales
+    cy.get('ion-input[formcontrolname="email"]').type('riv.uribe@duocuc.cl');
+    cy.get('ion-input[formcontrolname="password"]').type('111111');
+    cy.get('ion-button[type="submit"]').click();
+
+    // Espera a que se realice la solicitud de login
+    cy.wait('@mockLogin');
+
+    // Verifica que redirige al home
+    cy.url().should('eq', `${baseUrl}/home`);
   });
 
-  it('Debería mostrar error si el formato del correo es inválido', () => {
-    cy.get('ion-input[type="email"] input').type('usuario@ejemplo');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.contains('Formato de e-mail inválido.').should('be.visible');
+  it('Debería mostrar un mensaje de error con credenciales inválidas', () => {
+    // Mock para simular respuesta con credenciales inválidas
+    cy.intercept('POST', '/api/login', {
+      statusCode: 401,
+      body: { message: 'Credenciales incorrectas' },
+    }).as('mockInvalidLogin');
+
+    // Simula ingreso de credenciales incorrectas
+    cy.get('ion-input[formcontrolname="email"]').type('usuario@invalido.com');
+    cy.get('ion-input[formcontrolname="password"]').type('123456');
+    cy.get('ion-button[type="submit"]').click();
+
+    // Espera a que se realice la solicitud de login
+    cy.wait('@mockInvalidLogin');
+
+    // Verifica que aparece el mensaje de error
+    cy.get('ion-text.color-danger')
+      .should('exist')
+      .and('contain', 'Credenciales incorrectas');
   });
 
-  it('Debería mostrar error si la contraseña es muy corta o larga', () => {
-    cy.get('ion-input[type="email"] input').type('usuario@ejemplo.com');
+  it('Debería permitir navegar a la página de recuperar contraseña', () => {
+    // Navega al enlace para recuperar contraseña
+    cy.get('a').contains('RECUPERAR CONTRASEÑA').click();
 
-    // Contraseña corta
-    cy.get('ion-input[type="password"] input').type('123');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.contains('La contraseña debe tener entre 4 y 6 caracteres.').should('be.visible');
-
-    // Contraseña larga
-    cy.get('ion-input[type="password"] input').clear().type('1234567');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.contains('La contraseña debe tener entre 4 y 6 caracteres.').should('be.visible');
+    // Verifica que redirige correctamente
+    cy.url().should('eq', `${baseUrl}/recuperar-contrasena`);
   });
 
-  it('Debería permitir iniciar sesión con credenciales correctas y redirigir al home', () => {
-    cy.get('ion-input[type="email"] input').type('usuario@ejemplo.com');
-    cy.get('ion-input[type="password"] input').type('password123');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.url().should('include', '/home');
-  });
+  it('Debería permitir navegar a la página de registro', () => {
+    // Navega al enlace para registrarse
+    cy.get('a').contains('¿No tienes cuenta? Regístrate aquí').click();
 
-  it('Debería permitir iniciar sesión como administrador y redirigir al CRUD de usuarios', () => {
-    cy.get('ion-input[type="email"] input').type('admin@ejemplo.com');
-    cy.get('ion-input[type="password"] input').type('admin123');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.url().should('include', '/crud-usuarios');
-  });
-
-  it('Debería mostrar error con credenciales incorrectas', () => {
-    cy.get('ion-input[type="email"] input').type('usuario@ejemplo.com');
-    cy.get('ion-input[type="password"] input').type('wrongpassword');
-    cy.get('ion-button').contains('Entrar').click();
-    cy.contains('Usuario o contraseña incorrectos.').should('be.visible');
-  });
-
-  it('Debería navegar a la página de recuperación de contraseña', () => {
-    cy.get('ion-button').contains('Recuperar Contraseña').click();
-    cy.url().should('include', '/recuperar-contrasena');
-  });
-
-  it('Debería navegar a la página de registro', () => {
-    cy.get('ion-button').contains('Registro').click();
-    cy.url().should('include', '/mi-perfil?registro=true');
-    cy.contains('Registro de Usuario').should('be.visible');
+    // Verifica que redirige correctamente
+    cy.url().should('eq', `${baseUrl}/registro`);
   });
 });

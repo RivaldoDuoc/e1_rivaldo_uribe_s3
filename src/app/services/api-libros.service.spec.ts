@@ -1,19 +1,28 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing'; // Importa el módulo de pruebas HTTP
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ApiLibrosService } from './api-libros.service';
 
 describe('ApiLibrosService', () => {
   let service: ApiLibrosService;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule], // Importa HttpClientTestingModule
-      providers: [ApiLibrosService], // Proveedor del servicio 
+      imports: [HttpClientTestingModule],
+      providers: [ApiLibrosService],
     });
-    service = TestBed.inject(ApiLibrosService); // Instancia el servicio
+
+    service = TestBed.inject(ApiLibrosService);
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy(); // Verifica que el servicio fue creado
+  afterEach(() => {
+    httpMock.verify(); // Verifica que no haya solicitudes pendientes
   });
+
+  it('debería crear el servicio', () => {
+    expect(service).toBeTruthy();
+  });
+
+ 
 });

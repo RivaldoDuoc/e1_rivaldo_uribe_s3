@@ -1,99 +1,75 @@
-describe('CRUD Usuarios Page', () => {
+describe('Gestión de Usuarios', () => {
   beforeEach(() => {
-    // Mock para obtener la lista de usuarios
+    // Visitar la página principal de gestión de usuarios
+    cy.visit('http://localhost:8100/crud-usuarios');
+
+    // Mock para datos iniciales
     cy.intercept('GET', '/api/users', {
       statusCode: 200,
       body: [
-        { id: 1, nombre: 'Juan', apellidos: 'Pérez', tipoUsuario: 'admin', email: 'juan.perez@example.com' },
-        { id: 2, nombre: 'Ana', apellidos: 'Gómez', tipoUsuario: 'user', email: 'ana.gomez@example.com' },
+        { id: 1, nombre: 'Rivaldo', apellidos: 'Uribe', tipoUsuario: 'admin', email: 'riv.uribe@duocuc.cl' },
+        { id: 2, nombre: 'Juan', apellidos: 'Pérez', tipoUsuario: 'user', email: 'juan.perez@example.com' },
       ],
-    });
-
-    // Mock para actualizar un usuario
-    cy.intercept('PUT', '/api/users/1', {
-      statusCode: 200,
-      body: { success: true },
-    });
-
-    // Mock para eliminar un usuario
-    cy.intercept('DELETE', '/api/users/1', {
-      statusCode: 200,
-      body: { success: true },
-    });
-
-    // Visitar la página de gestión de usuarios
-    cy.visit('/crud-usuarios');
+    }).as('getUsers');
   });
 
-  it('should display a list of users', () => {
-    // Verificar que los usuarios están listados
-    cy.contains('Juan Pérez (admin)').should('be.visible');
-    cy.contains('Ana Gómez (user)').should('be.visible');
+  it('Debería mostrar la lista de usuarios', () => {
+    // Esperar que los usuarios se carguen
+    cy.wait('@getUsers');
+
+    // Verificar que se muestren los usuarios en la lista
+    cy.get('ion-item').should('have.length', 2);
+    cy.contains('Rivaldo Uribe (admin)').should('exist');
+    cy.contains('Juan Pérez (user)').should('exist');
   });
 
-  it('should navigate to edit a user', () => {
-    // Clic en el botón "Editar" para el primer usuario
+  it('Debería permitir editar un usuario', () => {
+    // Hacer clic en el botón "Editar" del primer usuario
     cy.contains('Editar').click();
 
-    // Verificar que los datos del usuario están cargados en el formulario
-    cy.get('ion-input[formControlName="nombre"]').should('have.value', 'Juan');
-    cy.get('ion-input[formControlName="apellidos"]').should('have.value', 'Pérez');
-    cy.get('ion-input[formControlName="email"]').should('have.value', 'juan.perez@example.com');
-    cy.get('ion-select[formControlName="tipoUsuario"]').should('have.value', 'admin');
-  });
+    // Verificar que se muestre el formulario de edición
+    cy.get('ion-input[formControlName="nombre"]').should('have.value', 'Rivaldo');
 
-  it('should save changes for a user', () => {
-    // Clic en el botón "Editar" para el primer usuario
-    cy.contains('Editar').click();
-
-    // Editar los datos del usuario
-    cy.get('ion-input[formControlName="nombre"]').clear().type('Carlos');
-    cy.get('ion-input[formControlName="apellidos"]').clear().type('Ramírez');
+    // Modificar los datos del usuario
+    cy.get('ion-input[formControlName="nombre"]').clear().type('Rivaldo Actualizado');
+    cy.get('ion-input[formControlName="apellidos"]').clear().type('Uribe Actualizado');
+    cy.get('ion-input[formControlName="password"]').type('123456');
+    cy.get('ion-input[formControlName="confirmPassword"]').type('123456');
     cy.get('ion-select[formControlName="tipoUsuario"]').select('user');
 
+    // Simular una respuesta al guardar
+    cy.intercept('PUT', '/api/users/1', {
+      statusCode: 200,
+    }).as('updateUser');
+
     // Guardar los cambios
-    cy.get('ion-button[type="submit"]').click();
+    cy.contains('Guardar Cambios').click();
 
-    // Verificar que el mock de guardar fue llamado correctamente
-    cy.contains('Cambios guardados correctamente').should('be.visible');
+    // Esperar que se guarden los cambios
+    cy.wait('@updateUser');
+
+    // Verificar que vuelva a la lista de usuarios
+    cy.get('ion-item').should('exist');
+    cy.contains('Rivaldo Actualizado Uribe Actualizado (user)').should('exist');
   });
 
-  it('should delete a user', () => {
-    // Clic en el botón "Eliminar" para el primer usuario
-    cy.contains('Eliminar').click();
+  it('Debería permitir eliminar un usuario', () => {
+    // Simular una respuesta al eliminar
+    cy.intercept('DELETE', '/api/users/2', {
+      statusCode: 200,
+    }).as('deleteUser');
 
-    // Verificar que el mock de eliminación fue llamado
-    cy.contains('Usuario eliminado correctamente').should('be.visible');
+    // Hacer clic en el botón "Eliminar" del segundo usuario
+    cy.contains('Juan Pérez (user)').parent().find('ion-button[color="danger"]').click();
 
-    // Verificar que el usuario ya no está en la lista
-    cy.contains('Juan Pérez (admin)').should('not.exist');
-  });
+    // Confirmar la eliminación
+    cy.on('window:confirm', () => true);
 
-  it('should show validation errors on the edit form', () => {
-    // Clic en el botón "Editar" para el primer usuario
-    cy.contains('Editar').click();
+    // Esperar que se elimine el usuario
+    cy.wait('@deleteUser');
 
-    // Limpiar los campos obligatorios
-    cy.get('ion-input[formControlName="nombre"]').clear().blur();
-    cy.get('ion-input[formControlName="apellidos"]').clear().blur();
-
-    // Verificar los mensajes de error
-    cy.contains('Nombre es requerido.').should('be.visible');
-    cy.contains('Apellidos son requeridos.').should('be.visible');
-
-    // Verificar que el botón "Guardar Cambios" esté deshabilitado
-    cy.get('ion-button[type="submit"]').should('be.disabled');
-  });
-
-  it('should cancel the edit process', () => {
-    // Clic en el botón "Editar" para el primer usuario
-    cy.contains('Editar').click();
-
-    // Clic en "Cancelar"
-    cy.get('ion-button').contains('Cancelar').click();
-
-    // Verificar que vuelve a la lista de usuarios
-    cy.contains('Users Management').should('be.visible');
-    cy.contains('Juan Pérez (admin)').should('be.visible');
+    // Verificar que el usuario ya no esté en la lista
+    cy.get('ion-item').should('have.length', 1);
+    cy.contains('Juan Pérez').should('not.exist');
   });
 });

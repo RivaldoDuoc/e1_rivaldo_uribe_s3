@@ -26,11 +26,11 @@ describe('AdminGuard', () => {
     guard = TestBed.inject(AdminGuard); // Inyección del guard
   });
 
-  it('should be created', () => {
+  it('debería crear el guard', () => {
     expect(guard).toBeTruthy();
   });
 
-  it('should allow access for admin user', async () => {
+  it('debería permitir el acceso a un usuario administrador', async () => {
     // Configurar Storage para devolver un usuario administrador
     mockStorage.get.and.returnValue(Promise.resolve({ tipoUsuario: 'admin' }));
 
@@ -39,7 +39,7 @@ describe('AdminGuard', () => {
     expect(mockRouter.navigate).not.toHaveBeenCalled(); // Verifica que no se redirige
   });
 
-  it('should deny access for non-admin user', async () => {
+  it('debería negar el acceso a un usuario que no es administrador', async () => {
     // Configurar Storage para devolver un usuario no administrador
     mockStorage.get.and.returnValue(Promise.resolve({ tipoUsuario: 'user' }));
 
@@ -48,7 +48,7 @@ describe('AdminGuard', () => {
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/home']); // Verifica que redirige a /home
   });
 
-  it('should deny access if no user is found', async () => {
+  it('debería negar el acceso si no se encuentra un usuario', async () => {
     // Configurar Storage para devolver null (sin usuario)
     mockStorage.get.and.returnValue(Promise.resolve(null));
 

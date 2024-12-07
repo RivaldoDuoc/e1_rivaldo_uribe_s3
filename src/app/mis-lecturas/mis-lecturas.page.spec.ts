@@ -16,6 +16,7 @@ describe('MisLecturasPage', () => {
   let mockModalController: any;
 
   beforeEach(waitForAsync(() => {
+    // Mock para ApiLibrosService
     mockApiLibrosService = jasmine.createSpyObj('ApiLibrosService', ['buscarLibro']);
     mockApiLibrosService.buscarLibro.and.returnValue(
       of({
@@ -27,6 +28,7 @@ describe('MisLecturasPage', () => {
       })
     );
 
+    // Mock para DbService
     mockDbService = jasmine.createSpyObj('DbService', ['obtenerLibros', 'agregarLibro', 'eliminarLibro', 'getUserByEmail']);
     mockDbService.getUserByEmail.and.returnValue(
       Promise.resolve({ id: 1, nombre: 'Test', apellidos: 'User', email: 'test@user.com' })
@@ -44,9 +46,11 @@ describe('MisLecturasPage', () => {
     );
     mockDbService.agregarLibro.and.returnValue(Promise.resolve());
 
+    // Mock para AlertController
     mockAlertController = jasmine.createSpyObj('AlertController', ['create']);
     mockAlertController.create.and.returnValue(Promise.resolve({ present: jasmine.createSpy('present') }));
 
+    // Mock para ModalController
     mockModalController = jasmine.createSpyObj('ModalController', ['create']);
     mockModalController.create.and.returnValue(
       Promise.resolve({
@@ -66,6 +70,7 @@ describe('MisLecturasPage', () => {
       ],
     }).compileComponents();
 
+    // Mock para localStorage
     spyOn(localStorage, 'getItem').and.returnValue('test@user.com');
 
     fixture = TestBed.createComponent(MisLecturasPage);
@@ -73,18 +78,18 @@ describe('MisLecturasPage', () => {
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('debería crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load user books on initialization', async () => {
+  it('debería cargar los libros del usuario al inicializar', async () => {
     await component.ngOnInit();
     expect(mockDbService.getUserByEmail).toHaveBeenCalledWith('test@user.com');
     expect(mockDbService.obtenerLibros).toHaveBeenCalledWith(1);
     expect(component.misLecturas.length).toBe(1);
   });
 
-  it('should add a book to the list after searching', async () => {
+  it('debería agregar un libro a la lista después de buscarlo', async () => {
     // Simula que la lista inicial está vacía
     component.misLecturas = [
       {
@@ -126,8 +131,8 @@ describe('MisLecturasPage', () => {
       })
     );
   });
-  
-  it('should show an error message if no user is found', async () => {
+
+  it('debería mostrar un mensaje de error si no se encuentra un usuario', async () => {
     mockDbService.getUserByEmail.and.returnValue(Promise.resolve(null));
 
     await component.ngOnInit();

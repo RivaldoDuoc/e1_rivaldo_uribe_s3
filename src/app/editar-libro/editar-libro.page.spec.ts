@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { EditarLibroPage } from './editar-libro.page';
 
 describe('EditarLibroPage', () => {
-  let component: EditarLibroPage;
+  let componente: EditarLibroPage;
   let fixture: ComponentFixture<EditarLibroPage>;
   let mockModalController: any;
 
@@ -23,27 +23,37 @@ describe('EditarLibroPage', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditarLibroPage);
-    component = fixture.componentInstance;
+    componente = fixture.componentInstance;
 
     // Inicializa el Input del componente
-    component.libro = { titulo: 'Libro de prueba', autor: 'Autor de prueba', isbn: '123456' };
+    componente.libro = { 
+      titulo: 'Libro de prueba', 
+      autor: 'Autor de prueba', 
+      isbn: '123456',
+      resena: '',
+      valoracion: 0,
+      imagen: '',
+      comentarios: '',
+      categoria: 'Otras categorías' // Campo inicializado
+    };
 
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('debería crear el componente', () => {
+    expect(componente).toBeTruthy();
   });
 
-  it('should dismiss modal with edited book on guardarCambios', async () => {
-    component.libroForm.patchValue({
+  it('debería cerrar el modal con el libro editado al guardar los cambios', async () => {
+    componente.libroForm.patchValue({
       titulo: 'Nuevo Título',
       autor: 'Nuevo Autor',
       isbn: '654321',
+      categoria: 'Otras categorías', // Asegurar que la categoría está incluida
     });
-  
-    await component.guardarCambios();
-  
+
+    await componente.guardarCambios();
+
     expect(mockModalController.dismiss).toHaveBeenCalledWith({
       titulo: 'Nuevo Título',
       autor: 'Nuevo Autor',
@@ -52,11 +62,12 @@ describe('EditarLibroPage', () => {
       valoracion: 0,
       imagen: '',
       comentarios: '',
+      categoria: 'Otras categorías', // Incluir categoría en la comparación
     });
   });
 
-  it('should dismiss modal without data on cancelar', async () => {
-    await component.cancelar();
+  it('debería cerrar el modal sin datos al cancelar', async () => {
+    await componente.cancelar();
 
     expect(mockModalController.dismiss).toHaveBeenCalled();
   });
