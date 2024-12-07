@@ -47,7 +47,13 @@
   <h2 *ngIf="misLecturas.length > 0" class="mejores-valorados">Mis Lecturas</h2>
   <div *ngFor="let libro of misLecturas" class="libro-container">
     <ion-card class="libro-card" (click)="editarLibro(libro)">
-      <img [src]="libro.imagen || 'assets/img/default-book.jpg'" alt="Imagen del libro" class="libro-imagen" />
+      <!-- Imagen con efecto de zoom -->
+      <img
+        #libroImagen
+        [src]="libro.imagen || 'assets/img/default-book.jpg'"
+        alt="Imagen del libro"
+        class="libro-imagen"
+      />
       <ion-card-content>
         <h3>{{ libro.titulo }}</h3>
         <p>Autor: {{ libro.autor }}</p>
@@ -56,5 +62,7 @@
     </ion-card>
     <ion-button color="danger" (click)="confirmarEliminar(libro.isbn)">Eliminar</ion-button>
   </div>
+
+  <!-- Mensaje cuando no hay libros -->
   <ion-text color="medium" *ngIf="misLecturas.length === 0">No existen libros agregados.</ion-text>
 </ion-content>

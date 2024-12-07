@@ -52,6 +52,19 @@ export class DbService {
       `;
       await this.db.execute(bookQuery);
       console.log('Tabla de libros creada/verificada.');
+
+      // Asegurar que el campo categoría exista
+      const alterTableQuery = `
+            ALTER TABLE libros ADD COLUMN categoria TEXT DEFAULT 'Otras categorías';
+          `;
+      try {
+        await this.db.execute(alterTableQuery);
+        console.log('Campo categoría agregado/verificado en la tabla de libros.');
+      } catch (error) {
+        console.log('Campo categoría ya existe.');
+      }
+
+
     } catch (error: any) {
       console.error('Error al inicializar la base de datos:', error.message || error);
 
@@ -172,8 +185,8 @@ export class DbService {
     try {
       await this.initializeDatabase();
       const query = `
-        INSERT INTO libros (titulo, autor, isbn, imagen, resena, valoracion, comentarios, usuarioId)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO libros (titulo, autor, isbn, imagen, resena, valoracion, comentarios, usuarioId, categoria)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
       `;
       await this.db?.run(query, [
         libro.titulo,
@@ -184,6 +197,7 @@ export class DbService {
         libro.valoracion || 0,
         libro.comentarios || '',
         usuarioId,
+        libro.categoria || 'Otras categorías',
       ]);
       console.log('Libro agregado correctamente.');
     } catch (error) {
@@ -221,7 +235,7 @@ export class DbService {
     try {
       const query = `
         UPDATE libros 
-        SET titulo = ?, autor = ?, resena = ?, valoracion = ?, comentarios = ?, imagen = ? 
+        SET titulo = ?, autor = ?, resena = ?, valoracion = ?, comentarios = ?, imagen = ?, categoria = ?
         WHERE isbn = ?;
       `;
       const params = [
@@ -231,6 +245,7 @@ export class DbService {
         libro.valoracion,
         libro.comentarios,
         libro.imagen,
+        libro.categoria, // Nuevo campo
         libro.isbn,
       ];
       await this.db?.run(query, params);
@@ -241,4 +256,60 @@ export class DbService {
     }
   }
   
+  
+  async obtenerLibrosPorCategoria(categoria: string): Promise<any[]> {
+    try {
+      await this.initializeDatabase();
+      const query = `SELECT * FROM libros WHERE categoria = ? ORDER BY id ASC;`;
+      const result = await this.db?.query(query, [categoria]);
+      return result?.values || [];
+    } catch (error) {
+      console.error('Error al obtener libros por categoría:', error);
+      throw new Error('No se pudieron obtener los libros.');
+    }
+  }
+  
+  async obtenerMejoresValorados(): Promise<any[]> {
+    try {
+      await this.initializeDatabase();
+      // Seleccionar solo los 6 libros con la mejor valoración
+      const query = `SELECT * FROM libros ORDER BY valoracion DESC LIMIT 6;`;
+      const result = await this.db?.query(query);
+      return result?.values || [];
+    } catch (error) {
+      console.error('Error al obtener mejores valorados:', error);
+      throw new Error('No se pudieron obtener los libros.');
+    }
+  }
+
+  async obtenerTodosLibros(): Promise<any[]> {
+    try {
+      await this.initializeDatabase();
+      const query = `SELECT * FROM libros ORDER BY id ASC;`; 
+      const result = await this.db?.query(query);
+      return result?.values || [];
+    } catch (error) {
+      console.error('Error al obtener todos los libros:', error);
+      throw new Error('No se pudieron obtener los libros.');
+    }
+  }
+
+  async buscarLibros(query: string): Promise<any[]> {
+    try {
+      await this.initializeDatabase();
+      const querySQL = `
+        SELECT * FROM libros 
+        WHERE LOWER(titulo) LIKE ? OR LOWER(autor) LIKE ? OR isbn LIKE ? OR LOWER(categoria) LIKE ?;
+      `;
+      const parametros = [`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`];
+      const result = await this.db?.query(querySQL, parametros);
+      return result?.values || [];
+    } catch (error) {
+      console.error('Error al buscar libros en la base de datos:', error);
+      throw new Error('No se pudo realizar la búsqueda en la base de datos.');
+    }
+  }
+  
+  
+
 }

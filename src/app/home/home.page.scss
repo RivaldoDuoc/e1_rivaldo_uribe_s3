@@ -90,3 +90,24 @@ ion-segment-button {
   }
 }
 
+.libro-imagen {
+  transition: transform 0.5s ease-in-out; /* Suaviza el efecto */
+  will-change: transform; /* Optimización de rendimiento */
+}
+
+.libro-imagen.zoom-in {
+  animation: zoomEffect 0.8s ease-in-out;
+}
+
+/* Definimos la animación */
+@keyframes zoomEffect {
+  0% {
+    transform: scale(1); /* Tamaño original */
+  }
+  50% {
+    transform: scale(1.25); /* Zoom */
+  }
+  100% {
+    transform: scale(1); /* Volver al tamaño original */
+  }
+}

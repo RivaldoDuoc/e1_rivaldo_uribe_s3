@@ -1,10 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <!-- Logo en la parte superior izquierda -->
     <ion-buttons slot="start">
       <img src="assets/img/logo.png" alt="Logo" class="logo" />
     </ion-buttons>
-    <!-- Menú hamburguesa en la parte superior derecha -->
     <ion-buttons slot="end">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -12,39 +10,34 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <!-- Buscador de libros -->
-  <ion-searchbar placeholder="Buscar por título, autor o ISBN" (ionInput)="buscarLibro($event)"></ion-searchbar>
+  <ion-searchbar placeholder="Buscar por título, autor, ISBN o categoría" (ionInput)="buscarLibro($event)"></ion-searchbar>
 
-  <!-- Segmento para seleccionar diferentes categorías de libros -->
   <ion-segment [(ngModel)]="categoriaSeleccionada" (ionChange)="cambiarCategoria()">
-    <ion-segment-button value="mejores">
-      + Valorados
-    </ion-segment-button>
-    <ion-segment-button value="recientes">
-      + Recientes
-    </ion-segment-button>
-    <ion-segment-button value="populares">
-      Populares
-    </ion-segment-button>
-    <ion-segment-button value="recomendados">
-      Recomendados
-    </ion-segment-button>
-    <ion-segment-button value="clasicos">
-      Clásicos
-    </ion-segment-button>
+    <ion-segment-button value="mejores">+ Valorados</ion-segment-button>
+    <ion-segment-button value="Infantil-juvenil">Infantil-juvenil</ion-segment-button>
+    <ion-segment-button value="Narrativos">Narrativos</ion-segment-button>
+    <ion-segment-button value="Técnicos">Técnicos</ion-segment-button>
+    <ion-segment-button value="Otras categorías">Otras categorías</ion-segment-button>
   </ion-segment>
 
-  <!-- Lista de libros según la categoría seleccionada -->
-  <div *ngFor="let libro of librosFiltrados" class="libro-container" (click)="verDetalle(libro)">
+  <div *ngFor="let libro of librosMostrados" class="libro-container" (click)="editarLibro(libro)">
     <ion-card class="libro-card">
-      <!-- Imagen del libro con tamaño ajustado -->
-      <img [src]="libro.imagen" alt="Imagen del libro" class="libro-imagen" />
+      <img #libroImagen [src]="libro.imagen || 'assets/img/default-book.jpg'" alt="Imagen del libro" class="libro-imagen" />
       <ion-card-content>
-        <!-- Título, autor e ISBN del libro con color y estilo personalizados -->
-        <h3 class="libro-titulo">{{ libro.titulo }}</h3>
-        <p class="libro-detalle">Autor: {{ libro.autor }}</p>
-        <p class="libro-detalle">ISBN: {{ libro.isbn }}</p>
+        <h3>{{ libro.titulo }}</h3>
+        <p>Autor: {{ libro.autor }}</p>
+        <p>ISBN: {{ libro.isbn }}</p>
+        <p>Categoría: {{ libro.categoria }}</p>
+        <p>Valoración: {{ libro.valoracion }}</p>
       </ion-card-content>
     </ion-card>
   </div>
+
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="cargarMasLibros($event)" [disabled]="infiniteScrollDisabled">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más libros..."></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <ion-text color="medium" *ngIf="librosFiltrados.length === 0">
+    <p>No hay libros disponibles en esta categoría.</p>
+  </ion-text>
 </ion-content>

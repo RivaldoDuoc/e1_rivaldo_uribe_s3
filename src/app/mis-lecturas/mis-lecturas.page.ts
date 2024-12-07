@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ApiLibrosService } from '../services/api-libros.service';
 import { DbService } from '../services/db.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -11,6 +11,7 @@ import { EditarLibroPage } from '../editar-libro/editar-libro.page';
   styleUrls: ['./mis-lecturas.page.scss'],
 })
 export class MisLecturasPage implements OnInit {
+  @ViewChildren('libroImagen') libroImagenes!: QueryList<ElementRef>; // Referencia a las imágenes
   misLecturas: any[] = []; // Lista de libros cargados
   buscarForm: FormGroup;
   mensajeError: string = '';
@@ -42,6 +43,8 @@ export class MisLecturasPage implements OnInit {
     } else {
       this.mostrarMensajeError('No se encontró el email del usuario. Por favor, inicia sesión.');
     }
+
+    this.configurarIntersectionObserver(); // Configurar el observer para las imágenes
   }
 
   async cargarLecturas() {
@@ -138,5 +141,25 @@ export class MisLecturasPage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+
+  configurarIntersectionObserver() {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const img = entry.target as HTMLElement;
+          if (entry.isIntersecting) {
+            img.classList.add('zoom-in'); // Añadir clase de zoom
+          } else {
+            img.classList.remove('zoom-in'); // Quitar clase de zoom
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    this.libroImagenes.changes.subscribe((imagenes) => {
+      imagenes.forEach((img: ElementRef) => observer.observe(img.nativeElement));
+    });
   }
 }

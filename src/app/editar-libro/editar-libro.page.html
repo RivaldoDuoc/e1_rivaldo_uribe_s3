@@ -30,6 +30,16 @@
     </ion-item>
 
     <ion-item>
+      <ion-label>Categoría</ion-label>
+      <ion-select formControlName="categoria">
+        <ion-select-option value="Infantil-juvenil">Infantil-juvenil</ion-select-option>
+        <ion-select-option value="Narrativos">Narrativos</ion-select-option>
+        <ion-select-option value="Técnicos">Técnicos</ion-select-option>
+        <ion-select-option value="Otras categorías">Otras categorías</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
       <ion-label>Valoración</ion-label>
       <ion-range min="0" max="5" step="0.5" formControlName="valoracion" snaps="true">
         <ion-icon slot="start" name="star-outline"></ion-icon>
@@ -45,14 +55,18 @@
     <ion-item>
       <ion-label position="stacked">Imagen</ion-label>
       <input type="file" (change)="subirImagen($event)" /> <!-- Selector de archivo para subir imágenes -->
-      <ion-button expand="block" color="secondary" (click)="tomarFotografia()">Tomar Foto</ion-button> <!-- Botón para tomar una foto -->
+      <ion-button expand="block" color="secondary" (click)="tomarFotografia()">Tomar Foto</ion-button>
+      <!-- Botón para tomar una foto -->
     </ion-item>
 
     <ion-item>
-      <img [src]="libroForm.get('imagen')?.value || 'assets/img/default-book.jpg'" style="width: 100%; max-height: 200px;" /> <!-- Vista previa de la imagen -->
+      <img [src]="libroForm.get('imagen')?.value || 'assets/img/default-book.jpg'"
+        style="width: 100%; max-height: 200px;" /> <!-- Vista previa de la imagen -->
     </ion-item>
 
-    <ion-button expand="block" color="primary" (click)="guardarCambios()">Guardar</ion-button> <!-- Botón para guardar cambios -->
-    <ion-button expand="block" color="danger" (click)="confirmarEliminar()">Eliminar</ion-button> <!-- Botón para eliminar el libro -->
+    <ion-button expand="block" color="primary" (click)="guardarCambios()">Guardar</ion-button>
+    <!-- Botón para guardar cambios -->
+    <ion-button expand="block" color="danger" (click)="confirmarEliminar()">Eliminar</ion-button>
+    <!-- Botón para eliminar el libro -->
   </form>
 </ion-content>

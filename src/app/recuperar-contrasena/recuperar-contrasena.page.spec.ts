@@ -5,13 +5,17 @@ describe('RecuperarContrasenaPage', () => {
   let component: RecuperarContrasenaPage;
   let fixture: ComponentFixture<RecuperarContrasenaPage>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [RecuperarContrasenaPage],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(RecuperarContrasenaPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should create the component', () => {
+    expect(component).toBeTruthy(); 
   });
 });

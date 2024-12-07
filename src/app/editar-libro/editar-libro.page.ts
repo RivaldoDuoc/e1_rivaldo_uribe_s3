@@ -28,7 +28,9 @@ export class EditarLibroPage {
       valoracion: [0, [Validators.min(0), Validators.max(5)]],
       imagen: [''],
       comentarios: [''],
+      categoria: ['Otras categorías', Validators.required], // Campo para categoría
     });
+    
   }
 
   // Carga los datos del libro recibido en el formulario
@@ -59,17 +61,15 @@ export class EditarLibroPage {
   async guardarCambios() {
     const libroActualizado = this.libroForm.value; // Obtiene los valores del formulario
     try {
-      // Actualiza el libro en la base de datos
-      await this.dbService.actualizarLibro(libroActualizado);
+      await this.dbService.actualizarLibro(libroActualizado); // Actualiza el libro con el servicio
       const alert = await this.alertController.create({
         header: 'Éxito',
         message: 'Libro actualizado correctamente.',
         buttons: ['OK'],
       });
       await alert.present();
-
-      // Cierra el modal y envía los datos actualizados
-      this.modalController.dismiss(libroActualizado);
+  
+      this.modalController.dismiss(libroActualizado); // Cierra el modal con los cambios
     } catch (error) {
       console.error('Error al guardar cambios:', error);
       const alert = await this.alertController.create({
@@ -80,6 +80,7 @@ export class EditarLibroPage {
       await alert.present();
     }
   }
+  
 
   // Cierra el modal sin realizar ningún cambio
   cancelar() {

@@ -1,9 +1,8 @@
-import { defineConfig } from "cypress";
+const { defineConfig } = require('cypress');
 
-export default defineConfig({
+module.exports = defineConfig({
   e2e: {
-    setupNodeEvents(on, config) {
-      // implement node event listeners here
-    },
+    baseUrl: 'http://localhost:8100', // URL base donde tu app está corriendo
+    specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}', // Patrón para localizar los archivos de prueba
   },
 });
