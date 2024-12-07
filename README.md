@@ -1,88 +1,105 @@
-# ComentaLibros
+ComentaLibros
 
-### Aplicación de Gestión de Usuarios y Libros
+¡Bienvenido a **ComentaLibros**! Una aplicación diseñada para fomentar la lectura y facilitar el intercambio de opiniones sobre libros en una comunidad digital.
 
-Este proyecto es una aplicación desarrollada en **Ionic Framework** y **Angular** que permite la gestión de usuarios y la integración con la API de OpenLibrary para buscar y cargar libros en el módulo "Mis Lecturas". La aplicación utiliza **SQLite** para el almacenamiento local y **Capacitor** para acceso a funcionalidades nativas.
 
----
 
-## **Características principales**
+📖 **Descripción del Proyecto**
 
-1. **Gestión de Usuarios**:
-   - Registro, edición y eliminación de usuarios.
-   - Almacenamiento de datos en SQLite mediante operaciones CRUD.
+**ComentaLibros** es una aplicación creada con **Ionic** y **Angular**, cuyo objetivo es brindar a los usuarios una plataforma para:
+- Explorar libros destacados por categorías.
+- Dejar comentarios y calificaciones.
+- Conectar con otros lectores y fomentar el hábito de la lectura.
 
-2. **Módulo "Mis Lecturas"**:
-   - Búsqueda de libros por título o ISBN a través de la API de OpenLibrary.
-   - Visualización y carga de lecturas con detalles como título, autor, imagen y más.
-
-3. **Seguridad y Acceso**:
-   - Validación de usuarios a través de formularios reactivos.
-   - Protección de rutas con **Route Guards**.
-
-4. **Sincronización de Datos**:
-   - Almacenamiento local de sesiones con Capacitor.
-   - Verificación de conectividad para sincronización con la API.
+Este proyecto fue desarrollado como parte de una actividad formativa, integrando tecnologías modernas como SQLite para la gestión local de datos y Cypress/Jasmine para pruebas.
 
 ---
 
-## **Tecnologías y Herramientas**
+🛠️ **Tecnologías Utilizadas**
 
-- **Frontend**:
-  - **Ionic Framework**: Diseño responsivo y nativo para interfaces gráficas.
-  - **Angular**: Gestión del flujo de datos y lógica de la aplicación.
-  
-- **Backend**:
-  - **API OpenLibrary**: Fuente de datos para la búsqueda de libros.
-
-- **Base de Datos**:
-  - **SQLite**: Almacenamiento local para usuarios y libros.
-
-- **Integraciones**:
-  - **Capacitor**: Acceso a funcionalidades nativas del dispositivo.
+- **Framework:** Ionic y Angular.
+- **Base de Datos:** SQLite.
+- **Lenguajes:** TypeScript, HTML5, CSS3.
+- **Pruebas:** Jasmine (unitarias) y Cypress (E2E).
+- **IDE:** Android Studio para la compilación y publicación en Android.
 
 ---
 
-## **Instalación y Ejecución**
+🚀 **Instalación y Configuración**
 
-1. **Clonar el repositorio**:
+Sigue estos pasos para ejecutar el proyecto en tu entorno local:
+
+1. **Clonar el repositorio:**
    ```bash
    git clone https://github.com/RivaldoDuoc/e1_rivaldo_uribe_s3.git
    cd e1_rivaldo_uribe_s3
-Instalar dependencias:
+Instalar dependencias: Asegúrate de tener Node.js y npm instalados. Luego, ejecuta:
 
 bash
 Copiar código
 npm install
-Ejecutar en un navegador:
+Configurar SQLite:
+
+Asegúrate de que el plugin SQLite esté instalado correctamente.
+Ejecuta:
+bash
+Copiar código
+ionic cap sync
+Iniciar la aplicación: Para probar la app en un navegador:
 
 bash
 Copiar código
 ionic serve
-Ejecutar en un dispositivo:
+Probar en Android:
 
-Android/iOS:
+Conecta un dispositivo o emulador Android.
+Compila el proyecto con:
 bash
 Copiar código
-ionic capacitor add android
 ionic capacitor run android
-Estructura del Proyecto
-src/app:
-services: Lógica para consumir la API de OpenLibrary y operaciones con SQLite.
-pages:
-login: Página de autenticación.
-mi-perfil: Gestión del perfil del usuario.
-mis-lecturas: Módulo para gestionar libros cargados.
-Uso de la Aplicación
-Inicio de Sesión:
+🧪 Pruebas
+Pruebas unitarias (Jasmine)
+Ejecuta las pruebas unitarias con el comando:
 
-Inicia sesión o regístrate para acceder a las funcionalidades.
-Gestión de Usuarios:
+bash
+Copiar código
+ng test
+Pruebas de extremo a extremo (Cypress)
+Ejecuta las pruebas E2E con:
 
-Edita tus datos desde la página "Mi Perfil".
-Búsqueda de Libros:
+bash
+Copiar código
+npx cypress open
+🌟 Características Destacadas
+Sistema de calificación y comentarios.
+Gestión local de datos con SQLite.
+Animaciones personalizadas y diseño intuitivo.
+Implementación de pruebas unitarias y E2E.
+📂 Estructura del Proyecto
+bash
+Copiar código
+├── src/
+│   ├── app/                 # Componentes principales
+│   ├── assets/              # Recursos (imágenes, íconos)
+│   ├── environments/        # Configuraciones de entorno
+│   ├── services/            # Servicios compartidos
+│   └── theme/               # Estilos globales
+└── README.md                # Documentación
+📱 Publicación
+La aplicación fue firmada y empaquetada en Android Studio, y está lista para su publicación en Google Play.
 
-En "Mis Lecturas", busca libros por título o ISBN y añádelos a tu biblioteca.
-Contribuciones
-¡Las contribuciones son bienvenidas! Si encuentras algún problema o tienes ideas para nuevas funciones, abre un issue o envía un pull request.
+📝 Licencia
+Este proyecto fue desarrollado con fines educativos y no tiene fines comerciales. Si deseas colaborar o modificarlo, ¡adelante!
+
+👥 Autores
+Rivaldo Uribe
+Estudiante de Duoc UC, apasionado por la programación y el desarrollo de aplicaciones móviles.
+
+
+
+
+
+
+
+
 
